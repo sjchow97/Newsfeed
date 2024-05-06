@@ -39,5 +39,4 @@ def Home(request):
     userprofile = UserProfile.objects.get(user=request.user)
     print userprofile.location
 
-    return render(request, 'home.html', {'location': userprofile.location})
-
+    return render(request, 'home.html', {'user': request.user, 'location': userprofile.location})
