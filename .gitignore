@@ -1,0 +1,2 @@
+# All .pyc files will not be tracked by version control, binary files
+*.pyc
