@@ -7,8 +7,12 @@ Start the app: python manage.py runserver
 Head to http://localhost:8000/accounts/login/
 
 login with one of the test accounts:
+
 user: stanley
+
 pass: password
 
+
 user: lester
+
 pass: password
