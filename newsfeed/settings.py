@@ -75,6 +75,11 @@ TEMPLATES = [
 WSGI_APPLICATION = 'newsfeed.wsgi.application'
 
 
+AUTHENTICATION_BACKENDS = [
+
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
