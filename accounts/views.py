@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from newsfeed import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from models import UserProfile
 
 # Create your views here.
 
@@ -12,7 +13,9 @@ def Login(request):
     # Create a new user
     # new_user = User.objects.create_user(username='username', email='email@example.com', password='password')
 
-    
+    # new_profile = UserProfile.objects.create(user=new_user, location='YellowKnife')
+    # new_profile.save()
+
     next = request.GET.get('next', '/home/')
     if request.method == 'POST':
         username = request.POST['username']
@@ -33,5 +36,8 @@ def Logout(request):
 
 @login_required
 def Home(request):
-    return render(request, 'home.html', {})
+    userprofile = UserProfile.objects.get(user=request.user)
+    print userprofile.location
+
+    return render(request, 'home.html', {'location': userprofile.location})
 
