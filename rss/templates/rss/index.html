@@ -1,16 +1,23 @@
+{% load custom_filters %}
+
 <ul>
 {% for entry in feeds.entries %}
-    <h4><a href="{{entry.link}}">{{entry.title}}</a></h4>
+    <h3><a href="{{entry.link}}">{{entry.title}}</a></h3>
     <p>{{entry.published}}</p>
     <p>{{entry.description}}</p>
 
-    {% if entry.title|slugify in post_comments %}
-        <p>Comments:</p>
-        {% for comment in post_comments.entry.title.comments %}
-            <p>{{ comment.content }}</p>
-        {% endfor %}
-    {% endif %}
+    {% with slugified_title=entry.title|custom_slugify %}
+        {% with comments=post_comments|get_item:slugified_title %}
+            {% if comments %}
+                <h4>Comments:</h4>
+                {% for comment in comments %}
+                    <hr/>
+                    <p><strong>{{ comment.post_title }}</strong></p>
+                    <p>{{ comment.content }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    {% endwith %}
     <hr/>
 {% endfor %}
 </ul>
-    

@@ -15,14 +15,13 @@ def index(request):
     feeds = feedparser.parse("https://www.coquitlam.ca/RSSFeed.aspx?ModID=76&CID=All-0")
     entry_dict = {}
     for entry in feeds.entries:
-        print(entry)
         reference_id = entry.title
         slugified_title = slugify(reference_id)
         if PostReference.objects.filter(reference_id=reference_id).exists():
             reference = PostReference.objects.get(reference_id=reference_id)
             comments = reference.feedpost_set.all()
             entry_dict[slugified_title] = comments
-            print(comments)
+            print(comments[0].content)
         else:
             print("Does not exist")
     template = loader.get_template("rss/index.html")
