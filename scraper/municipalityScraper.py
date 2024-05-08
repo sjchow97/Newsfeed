@@ -22,7 +22,6 @@ with open('bc.csv', 'r') as file:
             province = province.replace(" ", "_")
         
         wiki_site = "https://en.wikipedia.org/wiki/{},_{}".format(municipality, province)
-        print(wiki_site)
 
         try:
             response = urllib2.urlopen(wiki_site)
@@ -30,10 +29,14 @@ with open('bc.csv', 'r') as file:
             if response.getcode() == 200:
                 html = response.read()
                 soup = BeautifulSoup(html, 'html.parser')
+
+                # Find the <a> tag within the <span> tags with class "url"
+                link = soup.find('span', class_='url').find('a')['href']
+                city_site = urllib2.urlopen(link)
         
         except urllib2.HTTPError as e:
         # If an HTTP error occurs, print the status code and error message
-        print("HTTP Error:", e.code, e.reason)
+            print("HTTP Error:", e.code, e.reason)
 
 
 
