@@ -30,25 +30,17 @@ with open('bc.csv', 'r') as file:
                 html = response.read()
                 soup = BeautifulSoup(html, 'html.parser')
 
-                # Find the <a> tag within the <span> tags with class "url"
-                link = soup.find('span', class_='url').find('a')['href']
+                # Find the <a> tag within the <span> tags with class "official-website" and get the href attribute
+                link = soup.find('span', class_='official-website').find('a').get('href')
+                print(municipality)
+                print(link)
                 city_site = urllib2.urlopen(link)
                 if city_site.getcode() == 200:
                     city_html = city_site.read()
                     city_soup = BeautifulSoup(city_html, 'html.parser')
-
                     # from here, need to find the RSS URL and store it into a CSV. Need to handle cases where there is no RSS URL.
 
         
         except urllib2.HTTPError as e:
         # If an HTTP error occurs, print the status code and error message
             print("HTTP Error:", e.code, e.reason)
-
-
-
-
-        
-
-
-
-
