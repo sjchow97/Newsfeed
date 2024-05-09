@@ -12,6 +12,10 @@ class FeedReader(object):
 
         for source in rss_sources:
             feed = feedparser.parse(source.url)
-            feeds['entries'].extend(feed.entries)
+            if feed.bozo:
+                print("Error reading feed: " + feed.bozo_exception)
+                continue
+            else:
+                feeds['entries'].extend(feed.entries)
         feeds['entries'].sort(key=attrgetter('published_parsed'), reverse=True)
         return feeds
