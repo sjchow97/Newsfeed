@@ -6,8 +6,8 @@
     <p>{{entry.published}}</p>
     <p>{{entry.description}}</p>
 
-    {% with slugified_title=entry.title|custom_slugify %}
-        {% with comments=post_comments|get_item:slugified_title %}
+    {% with uuid=entry|convert_uuid %}
+        {% with comments=post_comments|get_item:uuid %}
             {% if comments %}
                 <h4>Comments:</h4>
                 {% for comment in comments %}
