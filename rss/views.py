@@ -1,32 +1,36 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
-from django.template.defaultfilters import slugify
+from .feed_reader import FeedReader
+from .comment_model_manager import CommentModelManager
+from .reaction_model_manager import ReactionModelManager
 
+from .models import PostReference
 
-from .models import PostReference, FeedPost, FeedVote
-
-import feedparser
-
+import uuid
 
 # Create your views here.
 
+REFERENCE_NAMESPACE = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
+
 def index(request):
-    feeds = feedparser.parse("https://www.coquitlam.ca/RSSFeed.aspx?ModID=76&CID=All-0")
-    entry_dict = {}
+    feeds = FeedReader.get_feeds(request.user.userprofile.location)
+    comment_dict = {}
+    reaction_dict = {}
     for entry in feeds.entries:
-        reference_id = entry.title
-        slugified_title = slugify(reference_id)
+        reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
+        print("id: " + str(reference_id))
         if PostReference.objects.filter(reference_id=reference_id).exists():
+            print("Reference exists")
             reference = PostReference.objects.get(reference_id=reference_id)
-            comments = reference.feedpost_set.all()
-            entry_dict[slugified_title] = comments
-            print(comments[0].content)
-        else:
-            print("Does not exist")
+            comments = CommentModelManager.get_comments(reference)
+            reactions = ReactionModelManager.get_reactions(reference)
+            comment_dict[reference_id] = comments
+            reaction_dict[reference_id] = reactions
     template = loader.get_template("rss/index.html")
     context = {
         "feeds": feeds,
-        "post_comments": entry_dict
+        "post_comments": comment_dict,
+        "post_reactions": reaction_dict,
     }
     return HttpResponse(template.render(context, request))
