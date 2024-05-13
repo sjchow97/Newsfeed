@@ -32,13 +32,18 @@ with open('bc.csv', 'r') as file:
 
                 # Find the <a> tag within the <span> tags with class "official-website" and get the href attribute
                 link = soup.find('span', class_='official-website').find('a').get('href')
-                link = link + "/sitemap"
+                
+                # Figure out how to handle case where its "/sitemap.xml" or just "/sitemap"
+                link = link + "/sitemap.xml"
                 city_site = urllib2.urlopen(link)
                 if city_site.getcode() == 200:
-                    city_html = city_site.read()
-                    city_soup = BeautifulSoup(city_html, 'html.parser')
-                    # after obtaining the sitemap, may need to search the "news" section for the RSS feed links.
-        
+                    city_sitemap_xml = city_site.read()
+                    city_soup = BeautifulSoup(city_sitemap_xml, 'html.parser')
+                    # Need to find all RSS urls in the sitemap
+                    for url in city_soup.find_all('url'):
+                        loc = url.find('loc').text
+                        print(loc)
+
         except urllib2.HTTPError as e:
         # If an HTTP error occurs, print the status code and error message
             print("HTTP Error:", e.code, e.reason)
