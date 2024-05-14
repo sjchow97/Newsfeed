@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
+from django.core.exceptions import ValidationError
+
 from .feed_reader import get_feeds
-from .comment_model_manager import get_comments
+from .comment_model_manager import get_comments, add_comment, edit_comment, delete_comment
 from .reaction_model_manager import get_reactions
 
 from .models import PostReference
@@ -35,5 +37,48 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
-# def post_comment(request):
-#     if request.
+@csrf_exempt
+def post_comment(request):
+    if request.method == 'POST':
+        reference_id = request.POST['reference_id']
+        post_title = request.POST['post_title']
+        content = request.POST['content']
+        user = request.user
+
+        try: 
+            add_comment(reference_id, user, post_title, content)
+            return JsonResponse({'status': 'success', 'message': 'Comment added successfully'})
+        except ValidationError as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def edit_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST['comment_id']
+        post_title = request.POST['post_title']
+        content = request.POST['content']
+        user = request.user
+
+        try: 
+            edit_comment(comment_id, user, post_title, content)
+            return JsonResponse({'status': 'success', 'message': 'Comment edited successfully'})
+        except ValidationError as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+@csrf_exempt
+def delete_comment(request):
+    if request.method == 'POST':
+        comment_id = request.POST['comment_id']
+        user = request.user
+
+        try: 
+            delete_comment(comment_id, user)
+            return JsonResponse({'status': 'success', 'message': 'Comment deleted successfully'})
+        except ValidationError as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
