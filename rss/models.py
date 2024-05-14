@@ -21,10 +21,10 @@ class PostReference(models.Model):
 
 class PostComment(models.Model):
     comment_id = models.IntegerField(primary_key=True)
-    post_title = models.CharField(max_length=200)
-    content = models.CharField(max_length=200)
-    link = models.CharField(max_length=200)
+    post_title = models.CharField(max_length=80, null=True)
+    content = models.CharField(max_length=800)
     creation_date = models.DateTimeField("date published")
+    edited_date = models.DateTimeField("date edited", null=True)
     reference = models.ForeignKey(PostReference, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

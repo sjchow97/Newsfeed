@@ -34,3 +34,6 @@ def index(request):
         "post_reactions": reaction_dict,
     }
     return HttpResponse(template.render(context, request))
+
+# def post_comment(request):
+#     if request.
