@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     "rss",
     "accounts",
     "rest_framework",
+    "corsheaders",
 )
 
 
@@ -52,6 +53,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 ROOT_URLCONF = 'newsfeed.urls'
@@ -109,3 +111,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CORS_ORIGIN_ALLOW_ALL = True  # Allow all origins temporarily until FE URL is known. once known, change to False and add the FE URL to the whitelist
+
+# CORS_ORIGIN_WHITELIST = (
+#     'http://example.com',
+#     'https://example.com',
+# )

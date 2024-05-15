@@ -37,7 +37,7 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
-@csrf_exempt
+# @csrf_exempt
 def post_comment(request):
     if request.method == 'POST':
         reference_id = request.POST['reference_id']
@@ -53,7 +53,7 @@ def post_comment(request):
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
-@csrf_exempt
+# @csrf_exempt
 def edit_comment(request):
     if request.method == 'POST':
         comment_id = request.POST['comment_id']
@@ -69,7 +69,7 @@ def edit_comment(request):
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
-@csrf_exempt
+# @csrf_exempt
 def delete_comment(request):
     if request.method == 'POST':
         comment_id = request.POST['comment_id']
