@@ -86,6 +86,7 @@ from rest_framework import generics
 from .models import PostReference, PostComment
 from .serializers import PostCommentSerializer
 
+# Sample class to perform a GET and POST to the database
 class ListComments(generics.ListCreateAPIView):
     queryset = PostComment.objects.all()
     serializer_class = PostCommentSerializer
