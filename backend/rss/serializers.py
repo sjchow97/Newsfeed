@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import RssSource, PostReference, PostComment, PostReaction
+from .models import RssSource, PostReference, PostComment, PostReaction, CommentReaction
 
 class RssSourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,7 +13,7 @@ class PostReferenceSerializer(serializers.ModelSerializer):
 
 class PostCommentSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('comment_id', 'post_title', 'content', 'creation_date', 'edited_date', 'reference', 'user')
+        fields = ('comment_id', 'post_title', 'content', 'creation_date', 'edited_date', 'reference', 'user', 'parent')
         model = PostComment
 
 class PostReactionSerializer(serializers.ModelSerializer):
@@ -21,3 +21,7 @@ class PostReactionSerializer(serializers.ModelSerializer):
         fields = ('reaction_id', 'reference', 'vote', 'user')
         model = PostReaction
 
+class CommentReactionSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ('id', 'comment', 'vote', 'user')
+        model = CommentReaction

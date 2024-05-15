@@ -27,6 +27,7 @@ class PostComment(models.Model):
     edited_date = models.DateTimeField("date edited", null=True)
     reference = models.ForeignKey(PostReference, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
     def __str__(self):
         return (self.user.username + ": " + self.post_title)
@@ -39,6 +40,19 @@ class PostReaction(models.Model):
 
     reaction_id = models.IntegerField(primary_key=True)
     reference = models.ForeignKey(PostReference, on_delete=models.CASCADE)
+    vote = models.IntegerField(choices=VOTE_CHOICES)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.vote
+
+class CommentReaction(models.Model):
+    VOTE_CHOICES = [
+        (1, 'Like'),
+        (-1, 'Dislike'),
+    ]
+
+    comment = models.ForeignKey(PostComment, on_delete=models.CASCADE)
     vote = models.IntegerField(choices=VOTE_CHOICES)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
