@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup
 from urlparse import urljoin, urlparse
 import urllib2
+import HTMLParser
+import re
 
 checked_urls = set()
 found_rss_feeds = set()
@@ -29,6 +31,108 @@ def find_rss_feed(url):
                         if full_rss_url not in found_rss_feeds:
                             found_rss_feeds.add(full_rss_url)
                             print('RSS feed found on {}: {}'.format(url, full_rss_url))
+
+
+                            try:
+                                response = urllib2.urlopen(full_rss_url)
+
+                                if response.getcode() == 200:
+                                    html = response.read()
+                                    soup = BeautifulSoup(html, 'html.parser')
+
+                                    #find whether or not the content is in xml format
+                                    if "<rss" in html or "<feed" in html:
+                                        print("XML format detected")
+                                    
+                                      
+                                        #parse each <item> tag
+                                        for item in soup.find_all('item'):
+                                            title = item.find('title')
+                                            description = item.find('description').get_text()
+                                            link = item.find('link')
+                                            pub_date = item.find('pubdate')
+
+
+                                            unescaped_title = (HTMLParser.HTMLParser().unescape(title.get_text())).encode('utf-8')
+                                            print "Unescaped title: " + unescaped_title
+                                            
+                                            # should probably not include items that do not have a pubdate
+                                            if pub_date == None:
+                                                print "No publication date found"
+                                            else:
+                                                print "Publication date: " + pub_date.get_text()
+                                        
+      
+
+                                            #this does not work, will print blank
+                                            print (item.link).get_text()
+                                            print "Link: " + link.get_text()
+
+                                            #this works
+                                            
+                                            unescaped_description = (HTMLParser.HTMLParser().unescape(description)).encode('utf-8')
+                                            print "Unescaped description: " + unescaped_description
+                                            
+
+                                            # if "CDATA" in description:
+                                            #     cdata_removed = re.sub(r'<!\[CDATA\[(.*?)\]\]>', r'\1', unescaped_description)
+                                            #     print cdata_removed.encode('utf-8')
+                                            #     #print unescaped_description
+                                            #     print "\n"
+                                            # else:
+                                            #     print "Unescaped description: " + unescaped_description
+                                                
+                                            
+                                            #description_soup = BeautifulSoup(description, 'html.parser')
+
+                                            # if description:
+                                                
+                                        
+                                            #     description_soup = BeautifulSoup(description, 'html.parser')
+                                            #     print(description_soup)
+                                               
+                                            #     if description_soup.find('description'):
+                                            #         #test = description_soup.find('description').get_text()
+                                            #         #print(test)
+                                            #         print("d")
+
+                                            #     # Continue with the rest of your code for processing the description content
+                                            #     #description_content = description_soup.find('description').get('content')
+                                            #     #print HTMLParser.HTMLParser().unescape(description_content)
+
+                                            #     # Unescape the HTML entities
+                                            #     #unescaped_content = HTMLParser.HTMLParser().unescape(description_content)
+
+                                            #     #print(unescaped_content)
+                                            # else:
+                                            #     print("Description not found")
+
+                                            # Extract the contents of the description tag
+                                            # description_content = description_soup.find('description').get('content')
+
+                                            # # Unescape the HTML entities
+                                            # unescaped_content = HTMLParser.HTMLParser().unescape(description_content)
+
+                                            # print(unescaped_content)
+
+
+                                            #print("Title: " + item.title.text)
+                                            #print("Description: " + HTMLParser.HTMLParser().unescape(item.description.text))
+                                            #print("Link: " + item.link.text)
+                                            # print HTMLParser.HTMLParser().unescape(item.description)
+                                            
+                                            # working
+                                            decoded_item = HTMLParser.HTMLParser().unescape(item.text)
+                                            #print(decoded_item)
+
+                            except urllib2.HTTPError as e:
+                            # If an HTTP error occurs, print the status code and error message
+                                print("HTTP Error:", e.code, e.reason)
+
+
+
+
+
             else:
                 print('No RSS feed found on:', url)
         else:
