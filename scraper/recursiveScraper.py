@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from urlparse import urljoin, urlparse
+import urllib2
 
 checked_urls = set()
 found_rss_feeds = set()
