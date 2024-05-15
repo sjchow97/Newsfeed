@@ -1,8 +1,8 @@
+# Introduction
+
 Seeder scripts are found in an app's management/commands path. Ensure there is an **init**.py file in each these subdirectories, even if they are empty!
 
-To seed the database: python manage.py seed
-
-Start the app: python manage.py runserver
+To seed the database: `python manage.py seed`
 
 Head to http://localhost:8000/accounts/login/
 
@@ -14,8 +14,30 @@ pass: password
 user: lester
 pass: password
 
-### Required Packages
+# Development Environment Setup
+
+## Backend Django App
 
 The application has multiple required packages in order to run. They are outlined in `rss_requirements.txt`.
+In order to install all packages at once, run the command `pip install -r rss_requirements.txt` in the `backend` directory.
 
-In order to install all packages at once, run the command `pip install -r rss_requirements.txt` in the root directory.
+## Frontend Django App
+
+In order to install all modules, run the command `npm i` in the `frontend directory.
+
+# Starting up the Application
+
+Ensure that both the backend and frontend are running for the application to function properly.
+
+## Backend Django App
+
+To start the backend, change directory to `backend`, then run `python manage.py runserver`.
+
+## Frontend React App
+
+To start the frontend UI, change directory to `frontend`, then run `npm start`.
+The frontend can be viewed at http://localhost:3000.
+
+# Repository Structure
+
+The repository is laid out in the following structure:
