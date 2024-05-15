@@ -1,14 +1,6 @@
-<<<<<<< HEAD
-Seeder scripts are found in an app's management/commands path. Ensure there is an **init**.py file in each these subdirectories, even if they are empty!
-
-To seed the database: `python manage.py seed`
-
-Start the app: `python manage.py runserver`
-=======
 # Introduction
 
 <!-- Add description of the project, ie webapp and scraper -->
->>>>>>> master
 
 Head to http://localhost:8000/accounts/login/
 
@@ -16,10 +8,7 @@ login with one of the test accounts:
 
 user: stanley
 pass: password
-<<<<<<< HEAD
-=======
 (locale is Vancouver, BC)
->>>>>>> master
 
 user: lester
 pass: password
