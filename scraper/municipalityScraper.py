@@ -1,6 +1,9 @@
 """
 This script will be used to scrape the municipality RSS URLs from the CSV file containing all the municipalities.
+
 In order to run the script, ensure that the CSV file is in the same directory as this script, and run python municipalityScraper.py.
+Also ensure that the package BeautifulSoup is installed by running pip install beautifulsoup4.
+
 The script will output a CSV file containing the municipality name and the RSS URL.
 Using python version 2.7.18
 """
