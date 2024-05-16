@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 from .feed_reader import get_feeds
 from .comment_model_manager import get_comments, add_comment, edit_comment, delete_comment
@@ -83,10 +84,34 @@ import uuid
 #     else:
 #         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .models import PostReference, PostComment
-from .serializers import PostCommentSerializer
+from .serializers import PostReferenceSerializer, PostCommentSerializer
 
 # Sample class to perform a GET and POST to the database
 class ListComments(generics.ListCreateAPIView):
     queryset = PostComment.objects.all()
     serializer_class = PostCommentSerializer
+
+@api_view(['POST'])
+def create_post_comment(request):
+    if request.method == 'POST':
+        post_reference_data = request.data.pop('post_reference', None)
+        if post_reference_data is not None:
+            post_reference, created = PostReference.objects.get_or_create(reference_id=post_reference_data['reference_id'], defaults=post_reference_data)
+            data = request.data.copy()
+            data.update({'reference': post_reference.reference_id})
+            data.update({'parent': None})
+            data.update({'user': request.user.id})
+            data.update({'creation_date': timezone.now()})
+            post_comment_serializer = PostCommentSerializer(data=data)
+            if post_comment_serializer.is_valid():
+                post_comment = post_comment_serializer.save()
+                return Response(post_comment_serializer.data)
+            else:
+                return Response(post_comment_serializer.errors, status=400)
+        else:
+            return Response({'error': 'post_reference data is missing'}, status=400)
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
