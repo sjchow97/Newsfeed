@@ -43,9 +43,14 @@ def find_rss_feed(url):
                                     #find whether or not the content is in xml format
                                     if "<rss" in html or "<feed" in html:
                                         print("XML format detected")
-                                    
+
+                                        # These fields are related to the RssSource model
+                                        print("BASE URL: " + full_rss_url)
+                                        print("NAME: " + soup.title.string)
+                                        # location needs to be based on csv file inputs
+                                        print("LOCATION: ")
                                       
-                                        #parse each <item> tag
+                                        # parse each <item> tag for fields that will be displayed on the news feed
                                         for item in soup.find_all('item'):
                                             title = item.find('title')
                                             description = item.find('description').get_text()
@@ -121,8 +126,8 @@ def find_rss_feed(url):
                                             #print("Link: " + item.link.text)
                                             # print HTMLParser.HTMLParser().unescape(item.description)
                                             
-                                            # working
-                                            decoded_item = HTMLParser.HTMLParser().unescape(item.text)
+                                            # decoding the entities with nested tags causes issues
+                                            #decoded_item = HTMLParser.HTMLParser().unescape(item.text)
                                             #print(decoded_item)
 
                             except urllib2.HTTPError as e:
