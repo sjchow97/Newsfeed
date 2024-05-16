@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
-import "./Comment.css";
+import "./comment.css";
 
 const Comment = () => {
-  const [comments, setComments] = useState({});
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch("http://127.0.0.1:8000/api/");
         const data = await res.json();
+        console.log(data);
         setComments(data);
       } catch (error) {
         console.log(error);
@@ -20,12 +21,16 @@ const Comment = () => {
 
   return (
     <div>
-      {comments.map((comment) => (
-        <div key={comment.comment_id}>
-          <h1>{comment.post_title}</h1>
-          <p>{comment.content}</p>
-        </div>
-      ))}
+      <h2>Comments:</h2>
+      <ul>
+        {comments.map((comment) => (
+          <div>
+            <p key={comment.comment_id}></p>
+            <p>{comment.post_title}</p>
+            <p>{comment.content}</p>
+          </div>
+        ))}
+      </ul>
     </div>
   );
 };
