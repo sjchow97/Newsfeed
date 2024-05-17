@@ -1,6 +1,18 @@
 # Introduction
 
-<!-- Add description of the project, ie webapp and scraper -->
+This repository contains code for the PlaceSpeak Newsfeed application, as provided by Team 22 for COMP 4800.
+A web application and web scraper script are included.
+
+# Technologies
+
+Web Scraper - written with Python 2.7.18
+
+Web Application:
+
+- Backend - Django 1.8.17 (on top of Python 2.7.18)
+- Frontend - React v18.3.1
+
+# Login Accounts
 
 Head to http://localhost:8000/accounts/login/
 
@@ -29,11 +41,11 @@ In order to install all packages at once, run the command `pip install -r rss_re
 
 Seeder scripts are found in an app's management/commands path. Ensure there is an **init**.py file in each these subdirectories, even if they are empty!
 
-To seed the database, run the command `python manage.py seed` in the `backend` directory.
+To seed the database, run the command `python manage.py seed` in the `/backend` directory.
 
 ### Frontend Django App
 
-In order to install all modules, run the command `npm i` in the `frontend directory.
+In order to install all modules, run the command `npm i` in the `/frontend` directory.
 
 ## Starting up the Application
 
@@ -56,4 +68,22 @@ The frontend can be viewed at http://localhost:3000.
 
 The repository is laid out in the following structure:
 
-<!-- add tree structure outlining repo here! -->
+```
+.
+├── backend - directory containing Django code
+│ ├── accounts - Django app related to user accounts
+│ ├── newsfeed - main Django app tying all pieces together
+│ ├── rss - Django app related to displaying RSS feeds and CRUD of comments
+│ ├── .gitignore
+│ ├── db.sqlite3 - SQLite database
+│ ├── manage.py - starting point for backend Django server
+│ └── rss_requirements.txt - text file containing relevant packages used by the backend
+├── frontend - directory containing React code
+│ ├── node_modules - directory containing all relevant node package modules used by the frontend
+│ ├── src - directory containing React code
+│ │ ├── components - directory containing individual react components, with JSX and CSS
+│ └── public - directory contains static assets
+└── README.md
+```
+
+<!-- insert web scraper into structure later -->
