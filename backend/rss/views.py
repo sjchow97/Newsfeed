@@ -90,9 +90,18 @@ from .models import PostReference, PostComment
 from .serializers import PostReferenceSerializer, PostCommentSerializer
 
 # Sample class to perform a GET and POST to the database
-class ListComments(generics.ListCreateAPIView):
-    queryset = PostComment.objects.all()
-    serializer_class = PostCommentSerializer
+# class ListComments(generics.ListCreateAPIView):
+#     queryset = PostComment.objects.all()
+#     serializer_class = PostCommentSerializer
+
+@api_view(['GET'])
+def list_comments(request):
+    if request.method == 'GET':
+        post_comments = PostComment.objects.all()
+        post_comment_serializer = PostCommentSerializer(post_comments, many=True)
+        return Response(post_comment_serializer.data)
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
 
 @api_view(['POST'])
 def create_post_comment(request):
@@ -113,5 +122,43 @@ def create_post_comment(request):
                 return Response(post_comment_serializer.errors, status=400)
         else:
             return Response({'error': 'post_reference data is missing'}, status=400)
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
+
+@api_view(['PUT'])
+def edit_post_comment(request, comment_id):
+    if request.method == 'PUT':
+        try:
+            post_comment = PostComment.objects.get(comment_id=comment_id)
+        except PostComment.DoesNotExist:
+            return Response({'error': 'PostComment not found'}, status=404)
+
+        if request.user.is_authenticated and post_comment.user == request.user:
+            data = request.data.copy()
+            data.update({'edited_date': timezone.now()})
+            for key in ['post_title', 'content', 'edited_date']:
+                if key in data:
+                    setattr(post_comment, key, data[key])
+            post_comment.save()
+            post_comment_serializer = PostCommentSerializer(post_comment)
+            return Response(post_comment_serializer.data)
+        else:
+            return Response({'error': 'User does not have permission to edit this comment'}, status=403)
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
+
+@api_view(['DELETE'])
+def delete_post_comment(request, comment_id):
+    if request.method == 'DELETE':
+        try:
+            post_comment = PostComment.objects.get(comment_id=comment_id)
+        except PostComment.DoesNotExist:
+            return Response({'error': 'PostComment not found'}, status=404)
+
+        if request.user.is_authenticated and post_comment.user == request.user:
+            post_comment.delete()
+            return Response({'message': 'Comment deleted successfully'})
+        else:
+            return Response({'error': 'User does not have permission to delete this comment'}, status=403)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
