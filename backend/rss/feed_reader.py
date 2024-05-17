@@ -22,13 +22,17 @@ def get_feeds(location):
     feeds['entries'].sort(key=attrgetter('published_parsed'), reverse=True)
     return feeds
 
-# Converts a FeedParserDict object to a JSON object
+# Converts a FeedParserDict object to a JSON object and also filters out data that is not needed
 # params: feed FeedParserDict object
 # returns: JSON object containing the feed data
 def feed_to_json(feed):
     json_feed = {}
 
     for key, value in feed.items():
+        # filters out data that is not needed
+        if key not in ["entries", "title", "summary", "description", "published", "link", "published_parsed"]:
+            continue
+            
         if isinstance(value, time.struct_time):
             # Convert time.struct_time to string
             json_feed[key] = time.strftime("%Y-%m-%d %H:%M:%S", value)
