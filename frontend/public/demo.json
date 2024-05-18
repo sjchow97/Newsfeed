@@ -1,0 +1,45 @@
+{
+    "feed_posts": [
+      {
+        "updated_parsed": "2024-05-17 18:50:26",
+        "summary_detail": {
+          "base": "https://www.tricitynews.com/rss",
+          "type": "text/html",
+          "language": null,
+          "value": "DENVER (AP) The Dallas Stars will be without centre Roope Hintz for a second straight game because of an upper-body injury. Hintz will miss Game"
+        },
+        "published_parsed": "2024-05-17 18:48:59",
+        "links": [
+          {
+            "href": "https://www.tricitynews.com/hockey/stars-centre-roope-hintz-out-for-game-6-with-upper-body-injury-avs-without-centre-yakov-trenin-8763724",
+            "type": "text/html",
+            "rel": "alternate"
+          },
+          {
+            "href": "https://www.vmcdn.ca/f/files/shared/feeds/cp/2024/05/2024051514054-6644f98b167b340b87560952jpeg.jpg;w=960",
+            "type": "image/jpeg",
+            "rel": "enclosure",
+            "length": "0"
+          }
+        ],
+        "title": "Stars centre Roope Hintz out for Game 6 with upper-body injury; Avs without centre Yakov Trenin",
+        "author": "Canadian Press",
+        "updated": "Fri, 17 May 2024 18:50:26 GMT",
+        "summary": "DENVER (AP)",
+        "guidislink": false,
+        "title_detail": {
+          "base": "https://www.tricitynews.com/rss",
+          "type": "text/plain",
+          "language": null,
+          "value": "Stars centre Roope Hintz out for Game 6 with upper-body injury; Avs without centre Yakov Trenin"
+        },
+        "link": "https://www.tricitynews.com/hockey/stars-centre-roope-hintz-out-for-game-6-with-upper-body-injury-avs-without-centre-yakov-trenin-8763724",
+        "authors": [
+          {
+            "name": "Canadian Press"
+          }
+        ]
+      }
+    ]
+  }
+  

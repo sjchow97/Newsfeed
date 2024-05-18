@@ -1,57 +1,49 @@
 .post {
-    flex-grow: 1;
-    padding: 20px;
-    background-color: #ffffff;
-    margin-left: 20px;
-    border-radius: 40px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    max-width: 800px;
-  }
-  
-  .post h1 {
-    font-size: 30px;
-    margin-bottom: 20px;
-  }
-  
-  .post p {
-    font-size: 16px;
-    font-weight: bold;
-    line-height: 1.5;
-    margin-bottom: 20px;
-  }
-  
-  .post-image {
-    width: 100%;
-    height: auto;
-    margin-bottom: 20px;
-    border-radius: 20px;
-  }
-  
-  .post-buttons {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .post-buttons button {
-    background-color: white;
-    color: black;
-    padding: 10px 20px;
-    border-radius: 40px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    border: none;
-  }
-  
-  .post-buttons button:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .comment-input {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #F0F0F0;
-    border-radius: 40px;
-  }
-  
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  margin-left: 20px;
+  border-radius: 40px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 800px;
+}
+
+.post h1 {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.post p {
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.post-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.post-buttons button {
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: none;
+}
+
+.post-buttons button:hover {
+  background-color: #f0f0f0;
+}
+
+.comment-input {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 40px;
+}
