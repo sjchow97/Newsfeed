@@ -83,6 +83,32 @@ def create_post_comment(request):
     else:
         return Response({'error': 'Invalid request method'}, status=405)
 
+# Replies to an existing comment
+# POST /rss/reply_to_comment/<comment_id>/
+# params: request object with body containing JSON object with the reply comment data
+# returns: response object with body containing JSON object with the new reply comment data
+@api_view(['POST'])
+def reply_to_comment(request, comment_id):
+    if request.method == 'POST':
+        try:
+            parent_comment = PostComment.objects.get(comment_id=comment_id)
+        except PostComment.DoesNotExist:
+            return Response({'error': 'Parent comment not found'}, status=404)
+
+        data = request.data.copy()
+        data.update({'reference': parent_comment.reference.reference_id})
+        data.update({'parent': parent_comment.comment_id})
+        data.update({'user': request.user.id})
+        data.update({'creation_date': timezone.now()})
+        post_comment_serializer = PostCommentSerializer(data=data)
+        if post_comment_serializer.is_valid():
+            post_comment = post_comment_serializer.save()
+            return Response(post_comment_serializer.data)
+        else:
+            return Response(post_comment_serializer.errors, status=400)
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
+
 # Edits an existing comment
 # PUT /rss/edit_comment/<comment_id>/
 # params: request object with body containing JSON object with the new post comment data
