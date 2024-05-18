@@ -30,9 +30,9 @@ def find_rss_feed(url, municipality):
                     if rss_url and ('rss' in rss_url.lower() or 'feed/' in rss_url.lower()):
                         full_rss_url = urljoin(url, rss_url)
                         if full_rss_url not in found_rss_feeds:
-                            found_rss_feeds.add(full_rss_url)
+                            #found_rss_feeds.add(full_rss_url)
+                            
                             print('RSS feed found on {}: {}'.format(url, full_rss_url))
-
 
                             try:
                                 response = urllib2.urlopen(full_rss_url)
@@ -43,7 +43,9 @@ def find_rss_feed(url, municipality):
 
                                     #find whether or not the content is in xml format
                                     if "<rss" in html or "<feed" in html:
-                                        print("XML format detected")
+                                        #print("XML format detected")
+                                        print('RSS feed found on {}: {}'.format(url, full_rss_url))
+                                        found_rss_feeds.add(full_rss_url)
 
                                         # These fields are related to the RssSource model
                                         print("BASE URL: " + full_rss_url)
@@ -68,8 +70,6 @@ def find_rss_feed(url, municipality):
                                                 continue
                                             else:
                                                 print "Publication date: " + pub_date.get_text()
-                                        
-      
 
                                             #this does not work, will print blank
                                             print (item.link).get_text()
@@ -78,58 +78,10 @@ def find_rss_feed(url, municipality):
                                             #this works
                                             unescaped_description = (HTMLParser.HTMLParser().unescape(description)).encode('utf-8')
                                             print "Unescaped description: " + unescaped_description
-                                            
-
-                                            # if "CDATA" in description:
-                                            #     cdata_removed = re.sub(r'<!\[CDATA\[(.*?)\]\]>', r'\1', unescaped_description)
-                                            #     print cdata_removed.encode('utf-8')
-                                            #     #print unescaped_description
-                                            #     print "\n"
-                                            # else:
-                                            #     print "Unescaped description: " + unescaped_description
-                                                
-                                            
-                                            #description_soup = BeautifulSoup(description, 'html.parser')
-
-                                            # if description:
-                                                
+                                    else:
+                                        #print "Searching the html contents inside " + full_rss_url
+                                        find_rss_feed(full_rss_url, municipality)
                                         
-                                            #     description_soup = BeautifulSoup(description, 'html.parser')
-                                            #     print(description_soup)
-                                               
-                                            #     if description_soup.find('description'):
-                                            #         #test = description_soup.find('description').get_text()
-                                            #         #print(test)
-                                            #         print("d")
-
-                                            #     # Continue with the rest of your code for processing the description content
-                                            #     #description_content = description_soup.find('description').get('content')
-                                            #     #print HTMLParser.HTMLParser().unescape(description_content)
-
-                                            #     # Unescape the HTML entities
-                                            #     #unescaped_content = HTMLParser.HTMLParser().unescape(description_content)
-
-                                            #     #print(unescaped_content)
-                                            # else:
-                                            #     print("Description not found")
-
-                                            # Extract the contents of the description tag
-                                            # description_content = description_soup.find('description').get('content')
-
-                                            # # Unescape the HTML entities
-                                            # unescaped_content = HTMLParser.HTMLParser().unescape(description_content)
-
-                                            # print(unescaped_content)
-
-
-                                            #print("Title: " + item.title.text)
-                                            #print("Description: " + HTMLParser.HTMLParser().unescape(item.description.text))
-                                            #print("Link: " + item.link.text)
-                                            # print HTMLParser.HTMLParser().unescape(item.description)
-                                            
-                                            # decoding the entities with nested tags causes issues
-                                            #decoded_item = HTMLParser.HTMLParser().unescape(item.text)
-                                            #print(decoded_item)
 
                             except urllib2.HTTPError as e:
                             # If an HTTP error occurs, print the status code and error message
@@ -149,6 +101,8 @@ def find_rss_feed(url, municipality):
 def crawl_website(start_url, municipality):
     visited_urls = set()
     queue = [start_url]
+
+    print 'Crawling website for: ' + municipality
 
     while queue:
         url = queue.pop(0)
