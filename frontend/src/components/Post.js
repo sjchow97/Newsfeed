@@ -2,12 +2,10 @@ import React, { useState, useEffect } from 'react';
 import '../styles/Post.css';
 
 function Post() {
-  const [likes, setLikes] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
-  const [dislikes, setDislikes] = useState(0);
-  const [isDisliked, setIsDisliked] = useState(false);
-  const [showCommentInput, setShowCommentInput] = useState(false);
-  const [article, setArticle] = useState(null);
+  const [likes, setLikes] = useState({});
+  const [dislikes, setDislikes] = useState({});
+  const [showCommentInput, setShowCommentInput] = useState({});
+  const [articles, setArticles] = useState([]);
 
   useEffect(() => {
     fetch('/demo.json')
@@ -18,61 +16,68 @@ function Post() {
         return response.json();
       })
       .then((data) => {
-        setArticle(data.feed_posts[0]);
+        setArticles(data.feed_posts);
       })
       .catch((error) => console.error('Error fetching data:', error));
   }, []);
 
-  function handleLike() {
-    if (isLiked) {
-      setLikes(likes - 1);
-    } else {
-      setLikes(likes + 1);
-      if (isDisliked) {
-        setDislikes(dislikes - 1);
-        setIsDisliked(false);
-      }
-    }
-    setIsLiked(!isLiked);
-  }
+  const handleLike = (id) => {
+    setLikes((prevLikes) => ({
+      ...prevLikes,
+      [id]: !prevLikes[id] ? 1 : 0,
+    }));
 
-  function handleDislike() {
-    if (isDisliked) {
-      setDislikes(dislikes - 1);
-    } else {
-      setDislikes(dislikes + 1);
-      if (isLiked) {
-        setLikes(likes - 1);
-        setIsLiked(false);
-      }
-    }
-    setIsDisliked(!isDisliked);
-  }
+    setDislikes((prevDislikes) => ({
+      ...prevDislikes,
+      [id]: prevDislikes[id] ? 0 : prevDislikes[id],
+    }));
+  };
 
-  function toggleCommentInput() {
-    setShowCommentInput(!showCommentInput);
-  }
+  const handleDislike = (id) => {
+    setDislikes((prevDislikes) => ({
+      ...prevDislikes,
+      [id]: !prevDislikes[id] ? 1 : 0,
+    }));
+
+    setLikes((prevLikes) => ({
+      ...prevLikes,
+      [id]: prevLikes[id] ? 0 : prevLikes[id],
+    }));
+  };
+
+  const toggleCommentInput = (id) => {
+    setShowCommentInput((prevShowCommentInput) => ({
+      ...prevShowCommentInput,
+      [id]: !prevShowCommentInput[id],
+    }));
+  };
 
   return (
-    <div className="post">
-      {article ? (
-        <>
-          <h1>{article.title}</h1>
-          <p>{new Date(article.published_parsed).toLocaleDateString()}</p>
-          <p>{article.summary_detail.value}</p>
-          <div className="post-buttons">
-            <button onClick={handleLike}>{isLiked ? 'Unlike' : 'Like'} {likes}</button>
-            <button onClick={handleDislike}>{isDisliked ? 'Undislike' : 'Dislike'} {dislikes}</button>
-            <button onClick={toggleCommentInput}>Comment</button>
-            <button onClick={() => alert('Share functionality to be implemented')}>Share</button>
-          </div>
-          {showCommentInput && (
-            <div className="comment-input">
-              <input type="text" placeholder="Write a comment..." />
-              <button>Post</button>
+    <div className="posts">
+      {articles.length > 0 ? (
+        articles.map((article) => (
+          <div className="post" key={article.id}>
+            <h1>{article.title}</h1>
+            <p>{new Date(article.published_parsed).toLocaleDateString()}</p>
+            <p>{article.summary_detail.value}</p>
+            <div className="post-buttons">
+              <button onClick={() => handleLike(article.id)}>
+                {likes[article.id] ? 'Unlike' : 'Like'} {likes[article.id] || 0}
+              </button>
+              <button onClick={() => handleDislike(article.id)}>
+                {dislikes[article.id] ? 'Undislike' : 'Dislike'} {dislikes[article.id] || 0}
+              </button>
+              <button onClick={() => toggleCommentInput(article.id)}>Comment</button>
+              <button onClick={() => alert('Share functionality to be implemented')}>Share</button>
             </div>
-          )}
-        </>
+            {showCommentInput[article.id] && (
+              <div>
+                <input className ="comment-in" type="text" placeholder="Write a comment..." />
+                <button className="submit">Post</button>
+              </div>
+            )}
+          </div>
+        ))
       ) : (
         <p>Loading...</p>
       )}
