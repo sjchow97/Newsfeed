@@ -30,9 +30,8 @@ def find_rss_feed(url, municipality):
                     if rss_url and ('rss' in rss_url.lower() or 'feed/' in rss_url.lower()):
                         full_rss_url = urljoin(url, rss_url)
                         if full_rss_url not in found_rss_feeds:
-                            #found_rss_feeds.add(full_rss_url)
                             
-                            print('RSS feed found on {}: {}'.format(url, full_rss_url))
+                            print('Potential RSS Feed on the page:  {}: {}'.format(url, full_rss_url))
 
                             try:
                                 response = urllib2.urlopen(full_rss_url)
@@ -41,9 +40,9 @@ def find_rss_feed(url, municipality):
                                     html = response.read()
                                     soup = BeautifulSoup(html, 'html.parser')
 
-                                    #find whether or not the content is in xml format
+                                    #find whether or not the content is a RSS feed, which will contain the <rss> or <feed> tag
                                     if "<rss" in html or "<feed" in html:
-                                        #print("XML format detected")
+                                       
                                         print('RSS feed found on {}: {}'.format(url, full_rss_url))
                                         found_rss_feeds.add(full_rss_url)
 
@@ -60,37 +59,32 @@ def find_rss_feed(url, municipality):
                                             link = item.find('link')
                                             pub_date = item.find('pubdate')
 
-
+                                            # unescape the title to remove any html entities and encode it to utf-8
                                             unescaped_title = (HTMLParser.HTMLParser().unescape(title.get_text())).encode('utf-8')
                                             print "Unescaped title: " + unescaped_title
                                             
-                                            # should probably not include items that do not have a pubdate onto the news feed
+                                            # do not include items that do not have a pubdate onto the news feed
                                             if pub_date == None:
                                                 print "No publication date found for this news item, skipping to next item"
                                                 continue
                                             else:
                                                 print "Publication date: " + pub_date.get_text()
 
-                                            #this does not work, will print blank
-                                            print (item.link).get_text()
-                                            print "Link: " + link.get_text()
+                                            # retrieving link of RSS feed items needs work, will print out as empty string
+                                            #print (item.link).get_text()
+                                            #print "Link: " + link.get_text()
 
-                                            #this works
+                                            # unescape the description to remove any html entities and encode it to utf-8
                                             unescaped_description = (HTMLParser.HTMLParser().unescape(description)).encode('utf-8')
                                             print "Unescaped description: " + unescaped_description
                                     else:
-                                        #print "Searching the html contents inside " + full_rss_url
+                                        
+                                        # recursive search as some sites will have multiple feeds listed on the /rss page such as coquitlam https://www.coquitlam.ca/rss.aspx
                                         find_rss_feed(full_rss_url, municipality)
                                         
-
                             except urllib2.HTTPError as e:
                             # If an HTTP error occurs, print the status code and error message
                                 print("HTTP Error:", e.code, e.reason)
-
-
-
-
-
             else:
                 print('No RSS feed found on:', url)
         else:
@@ -119,30 +113,20 @@ def crawl_website(start_url, municipality):
                         parsed_url = urlparse(absolute_url)
                         base_path = urlparse(start_url).path
 
-            
-
                         # Ensures that the script only check the URLs within the same domain
-                        #if absolute_url.startswith(start_url) and any(substring in parsed_url.path for substring in ["feed", "rss", "xml"]):
                         if absolute_url.startswith(start_url):
                             queue.append(absolute_url)
             except Exception as e:
                 print 'Error occurred while crawling {}: {}'.format(url, e)
 
-# Example usage:
-#crawl_website('https://vancouver.ca/')
 
-
+# Read the CSV file containing the municipalities, search for the Wikipedia page of each municipality, and find the official website, performs a recursive crawl for RSS feeds
 with open('sample.csv', 'r') as file:
     # Create a CSV reader object
     csv_reader = csv.reader(file)
     
-    count = 0
-
     for row in csv_reader:
 
-        count+=1
-
-        print count
         municipality = row[0]
         if " " in municipality:
             municipality = municipality.replace(" ", "_")
@@ -161,7 +145,6 @@ with open('sample.csv', 'r') as file:
 
                 # Find the <a> tag within the <span> tags with class "official-website" and get the href attribute
                 link = soup.find('span', class_='official-website').find('a').get('href')
-                #print link
                 
                 crawl_website(link, municipality)
 
