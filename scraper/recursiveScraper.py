@@ -51,9 +51,20 @@ def find_rss_feed(url, municipality):
                                         print("NAME: " + soup.title.string)
                                         # location needs to be based on csv file inputs
                                         print("LOCATION: " + municipality)
-                                      
+
+                                        # create new RssSource object
+                                        # rss_source = RssSource.objects.create(url=full_rss_url, source_name=soup.title.string, location=municipality)
+                                        # rss_source.save()
+
+                                        items = soup.find_all('item')
+                                        print "NUMBER OF ITEMS: " + str(len(items))
+
+                                        if len(items) > 0:
+                                            rss_source = RssSource.objects.create(url=full_rss_url, source_name=soup.title.string, location=municipality)
+                                            rss_source.save()
+
                                         # parse each <item> tag for fields that will be displayed on the news feed
-                                        for item in soup.find_all('item'):
+                                        for item in items:
                                             title = item.find('title')
                                             description = item.find('description').get_text()
                                             link = item.find('link')
@@ -61,7 +72,7 @@ def find_rss_feed(url, municipality):
 
                                             # unescape the title to remove any html entities and encode it to utf-8
                                             unescaped_title = (HTMLParser.HTMLParser().unescape(title.get_text())).encode('utf-8')
-                                            print "Unescaped title: " + unescaped_title
+                                            print "Title: " + unescaped_title
                                             
                                             # do not include items that do not have a pubdate onto the news feed
                                             if pub_date == None:
@@ -76,7 +87,7 @@ def find_rss_feed(url, municipality):
 
                                             # unescape the description to remove any html entities and encode it to utf-8
                                             unescaped_description = (HTMLParser.HTMLParser().unescape(description)).encode('utf-8')
-                                            print "Unescaped description: " + unescaped_description
+                                            print "Description: " + unescaped_description
                                     else:
                                         
                                         # recursive search as some sites will have multiple feeds listed on the /rss page such as coquitlam https://www.coquitlam.ca/rss.aspx
