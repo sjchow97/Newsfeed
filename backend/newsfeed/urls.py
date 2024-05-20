@@ -18,7 +18,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^api/rss/', include('rss.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('accounts.urls')),
+    url(r'^auth/', include('accounts.urls')),
     # This api url is for testing purposes, can be removed once verified that api works as intended
     # url(r'^api/', include('rss.urls'))
     #url(r'^accounts', include('accounts.urls')),
