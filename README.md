@@ -50,10 +50,10 @@ The frontend can be viewed at http://localhost:3000.
 
 # Web Scraper
 
-<!-- insert web scraper documentation here -->
+<!-- insert web scraper documentation here! -->
 
 # Repository Structure
 
 The repository is laid out in the following structure:
 
-<!-- add tree structure outlining repo here -->
+<!-- add tree structure outlining repo here! -->
