@@ -1,17 +1,19 @@
-import logo from "./logo.svg";
-import Comment from "./components/comment/Comment";
-import "./App.css";
+import React from 'react';
+import './styles/App.css';
+import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import Post from './components/Post';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <div>
-          <h1>hello world this is the frontend</h1>
-          <Comment />
+      <Navbar />
+      <div className="container">
+        <Sidebar />
+        <div className="content">
+          <Post />
         </div>
-      </header>
+      </div>
     </div>
   );
 }
