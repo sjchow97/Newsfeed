@@ -21,6 +21,7 @@ const Login = () => {
       );
       setMessage(response.data.message);
       localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("token", response.data.token);
       // Handle successful login (e.g., redirect user)
     } catch (error) {
       setMessage(error.response.data.error);
