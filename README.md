@@ -28,7 +28,11 @@ pass: password
 
 # Web Application
 
+Note this repository only includes code relating to local news RSS feeds, please see [fcv-redesign repo](https://github.com/PlaceSpeak/fcv-redesign)
+
 ## Development Environment Setup
+
+Please follow all subsequent Backend and Frontend steps to start the development servers locally.
 
 ### Backend Django App
 
