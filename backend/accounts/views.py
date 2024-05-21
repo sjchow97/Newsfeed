@@ -13,6 +13,7 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework.authtoken.models import Token
 
 # Create your views here.
 
@@ -27,12 +28,14 @@ class Login(APIView):
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request,user)
+            token, created = Token.objects.get_or_create(user=user)
             return Response({
                 'message': 'Login successful', 
                 'user': {
                     'username': user.username,
                     'locale': user.userprofile.location
                 },
+                'token': token.key
             }, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)

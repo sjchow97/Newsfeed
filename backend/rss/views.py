@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
+from rest_framework.authentication import TokenAuthentication
 
 from .feed_reader import get_feeds, feed_to_json
 from .comment_model_manager import get_comments
@@ -22,6 +23,7 @@ REFERENCE_NAMESPACE = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
 # params: request object
 # returns: response object with body containing JSON object containing the feed posts, comments, and reactions
 @api_view(['GET'])
+@authentication_classes([TokenAuthentication])
 def read_feeds(request):
     feeds = get_feeds(request.user.userprofile.location)
     json_feeds = feed_to_json(feeds)
