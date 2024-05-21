@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import Post from "../Post/Post";
-import "./Feed.css";
+import "./FeedPage.css";
 
-function Feed() {
+function FeedPage() {
   const [articles, setArticles] = useState([]);
 
   const token = localStorage.getItem("token");
@@ -24,6 +25,8 @@ function Feed() {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
+  console.log(articles);
+
   return (
     <div className="posts">
       {articles.length > 0 ? (
@@ -35,4 +38,4 @@ function Feed() {
   );
 }
 
-export default Feed;
+export default FeedPage;

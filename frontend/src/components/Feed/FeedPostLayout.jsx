@@ -1,18 +1,17 @@
 import React from "react";
 import Navbar from "../Layout/Navbar";
 import Sidebar from "../Layout/Sidebar";
-import FeedPage from "./FeedPage";
-import "./FeedPageLayout.css";
 
-const FeedPageLayout = () => {
+const FeedPostLayout = () => {
   return (
-    <div className="feed-page">
+    <div className="feed-post">
       <Navbar />
       <div className="content">
         <Sidebar />
-        <FeedPage />
+        {/* put Feedpost component here */}
       </div>
     </div>
   );
 };
-export default FeedPageLayout;
+
+export default FeedPostLayout;

@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import "./styles/App.css";
 import Login from "./components/Login/Login";
 import FeedPageLayout from "./components/Feed/FeedPageLayout";
+import FeedPostLayout from "./components/Feed/FeedPostLayout";
 
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
@@ -20,14 +21,14 @@ function App() {
             </PrivateRoute>
           }
         />
-        {/* <Route
+        <Route
           path="/feed/:id"
           element={
             <PrivateRoute>
-              <FeedPage />
+              <FeedPostLayout />
             </PrivateRoute>
           }
-        /> */}
+        />
       </Routes>
     </div>
   );

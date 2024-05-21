@@ -40,11 +40,12 @@ function Post({ article }) {
 
   return (
     <div className="post">
-      <a href={link}>
-        <h1>{title}</h1>
-      </a>
+      <h1>{title}</h1>
       <p>{new Date(published_parsed).toLocaleDateString()}</p>
       <p>{summary}</p>
+      <a href={link}>
+        <p>Link to article</p>
+      </a>
       <div className="post-buttons">
         <button onClick={() => handleLike(article.id)}>
           {likes[article.id] ? "Unlike" : "Like"} {likes[article.id] || 0}
