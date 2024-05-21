@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 import { getCSRFToken } from "../../services/utils";
 import axios from "axios";
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -21,6 +24,7 @@ const Login = () => {
       );
       setMessage(response.data.message);
       localStorage.setItem("user", JSON.stringify(response.data.user));
+      navigate("/feed");
       // Handle successful login (e.g., redirect user)
     } catch (error) {
       setMessage(error.response.data.error);
