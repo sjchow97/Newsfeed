@@ -35,7 +35,7 @@ pass: password
 #### Installing Packages
 
 The application has multiple required packages in order to run. They are outlined in `rss_requirements.txt`.
-In order to install all packages at once, run the command `pip install -r rss_requirements.txt` in the `backend` directory.
+In order to install all packages at once, run the command `pip install -r rss_requirements.txt` in the `/backend` directory.
 
 #### Seeding the Database
 
@@ -49,7 +49,7 @@ In order to install all modules, run the command `npm i` in the `/frontend` dire
 
 ## Starting up the Application
 
-Ensure that both the backend and frontend are running for the application to function properly.
+Ensure that both the backend and frontend servers are running for the application to function properly.
 
 ### Backend Django App
 
