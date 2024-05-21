@@ -14,7 +14,7 @@ Web Application:
 
 # Login Accounts
 
-Once the Frontend and Backend servers are running locally, navigate to `localhost:3000` to login.
+Once the Frontend and Backend servers are running locally, navigate to `http://localhost:3000` to login.
 
 login with one of the test accounts:
 
