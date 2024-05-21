@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../Layout/Navbar";
 import Sidebar from "../Layout/Sidebar";
 import Feed from "./Feed";
-import "./FeedPage.css";
+import "./FeedPageLayout.css";
 
 const FeedPage = () => {
   return (

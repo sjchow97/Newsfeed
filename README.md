@@ -11,6 +11,7 @@ Web Application:
 
 - Backend - Django 1.8.17 (on top of Python 2.7.18)
 - Frontend - React v18.3.1
+- Database - SQLite
 
 # Login Accounts
 

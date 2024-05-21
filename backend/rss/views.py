@@ -160,7 +160,7 @@ def delete_post_comment(request, comment_id):
         return Response({'error': 'Invalid request method'}, status=405)
 
 # Function from fcv-redesign meant to obtain image url 
-@login_required_ajax
+# @login_required_ajax
 def FetchMeta(request):
             if request.method == 'GET':
                 input_string = request.GET.get('input_string')  # String containing URL(s)

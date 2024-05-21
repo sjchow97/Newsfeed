@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import "./styles/App.css";
 import Login from "./components/Login/Login";
-import FeedPage from "./components/Feed/FeedPage";
+import FeedPageLayout from "./components/Feed/FeedPageLayout";
 
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
@@ -16,10 +16,18 @@ function App() {
           path="/feed"
           element={
             <PrivateRoute>
-              <FeedPage />
+              <FeedPageLayout />
             </PrivateRoute>
           }
         />
+        {/* <Route
+          path="/feed/:id"
+          element={
+            <PrivateRoute>
+              <FeedPage />
+            </PrivateRoute>
+          }
+        /> */}
       </Routes>
     </div>
   );
