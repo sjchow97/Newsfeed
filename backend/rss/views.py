@@ -15,7 +15,9 @@ from .models import PostReference, PostComment
 from .serializers import PostReferenceSerializer, PostCommentSerializer
 from bs4 import BeautifulSoup
 
+import re
 import uuid
+import requests
 
 REFERENCE_NAMESPACE = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
 
@@ -27,12 +29,28 @@ REFERENCE_NAMESPACE = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
 @authentication_classes([TokenAuthentication])
 def read_feeds(request):
     feeds = get_feeds(request.user.userprofile.location)
-    json_feeds = feed_to_json(feeds)
     comment_dict = {}
     # reaction_dict = {}
     for entry in feeds.entries:
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
-        print(reference_id)
+        entry['uuid'] = reference_id
+        # get meta info
+        url_pattern = re.compile(r'https?://\S+')
+        url_match = url_pattern.search(entry.link)
+        if url_match:
+            url = url_match.group()
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                html_content = response.content
+                soup = BeautifulSoup(html_content, 'html.parser')
+
+                image = soup.find('meta', property='og:image')
+
+                entry['image'] = image['content'] if image else ''
+        else:
+            url = None
+
         if PostReference.objects.filter(reference_id=reference_id).exists():
             reference = PostReference.objects.get(reference_id=reference_id)
             comments = get_comments(reference)
@@ -40,6 +58,7 @@ def read_feeds(request):
             # reactions = get_reactions(reference)
             comment_dict[str(reference_id)] = post_comment_serializer.data
             # reaction_dict[str(reference_id)] = reactions
+    json_feeds = feed_to_json(feeds)
     context = {
         "feed_posts": json_feeds["entries"], 
         "post_comments": comment_dict,
@@ -81,6 +100,7 @@ def list_comments(request):
 # params: request object with body containing JSON object with the post comment data
 # returns: response object with body containing JSON object with the new post comment data
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
 def create_post_comment(request):
     if request.method == 'POST':
         # Request body should contain post_reference data of the post they are commenting on
@@ -134,6 +154,7 @@ def reply_to_comment(request, comment_id):
 # params: request object with body containing JSON object with the new post comment data
 # returns: response object with body containing JSON object with the edited post comment data
 @api_view(['PUT'])
+@authentication_classes([TokenAuthentication])
 def edit_post_comment(request, comment_id):
     if request.method == 'PUT':
         try:
@@ -160,6 +181,7 @@ def edit_post_comment(request, comment_id):
 # params: request object
 # returns: response object with body containing JSON object with message indicating success or failure
 @api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
 def delete_post_comment(request, comment_id):
     if request.method == 'DELETE':
         try:

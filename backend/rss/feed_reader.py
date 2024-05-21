@@ -30,7 +30,8 @@ def feed_to_json(feed):
 
     for key, value in feed.items():
         # filters out data that is not needed
-        if key not in ["entries", "title", "summary", "description", "published", "link", "published_parsed", "summary_detail"]:
+        if key not in ["entries", "title", "summary", "description", "published", "link", "published_parsed", "summary_detail", "uuid",
+            "image"]:
             continue
             
         if isinstance(value, time.struct_time):

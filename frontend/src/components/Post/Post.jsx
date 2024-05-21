@@ -1,7 +1,11 @@
 import React, { useState } from "react";
+import { v5 as uuidv5 } from 'uuid';
+
+const REFERENCE_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
 function Post({ article }) {
   const { published_parsed, title, summary, base, link, published } = article;
+  const uuid = uuidv5(`${title}`, REFERENCE_NAMESPACE);
 
   const [likes, setLikes] = useState({});
   const [dislikes, setDislikes] = useState({});
