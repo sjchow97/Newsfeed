@@ -113,8 +113,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CORS_ORIGIN_ALLOW_ALL = True  # Allow all origins temporarily until FE URL is known. once known, change to False and add the FE URL to the whitelist
-
-# CORS_ORIGIN_WHITELIST = (
-#     'http://example.com',
-#     'https://example.com',
-# )
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+)

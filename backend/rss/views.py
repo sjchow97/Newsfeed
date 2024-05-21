@@ -29,6 +29,7 @@ def read_feeds(request):
     # reaction_dict = {}
     for entry in feeds.entries:
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
+        print(reference_id)
         if PostReference.objects.filter(reference_id=reference_id).exists():
             reference = PostReference.objects.get(reference_id=reference_id)
             comments = get_comments(reference)

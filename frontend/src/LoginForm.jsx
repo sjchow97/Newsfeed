@@ -15,9 +15,14 @@ const LoginForm = () => {
                 password,
             }, { withCredentials: true });
             setMessage(response.data.message);
+            console.log(response.data);
             // Handle successful login (e.g., redirect user)
         } catch (error) {
-            setMessage(error.response.data.error);
+            if (error.response) {
+                setMessage(error.response.data.error);
+            } else {
+                setMessage("An error occurred while making the request.");
+            }
         }
     };
 
