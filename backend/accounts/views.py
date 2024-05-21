@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.authtoken.models import Token
@@ -41,7 +42,9 @@ class Login(APIView):
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class Logout(APIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = (IsAuthenticated,)
+    
     def post(self, request):
         logout(request)
         return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)

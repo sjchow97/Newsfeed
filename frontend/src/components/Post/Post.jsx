@@ -40,7 +40,9 @@ function Post({ article }) {
 
   return (
     <div className="post">
-      <h1>{title}</h1>
+      <a href={link}>
+        <h1>{title}</h1>
+      </a>
       <p>{new Date(published_parsed).toLocaleDateString()}</p>
       <p>{summary}</p>
       <div className="post-buttons">

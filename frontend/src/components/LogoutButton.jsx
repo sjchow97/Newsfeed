@@ -10,9 +10,13 @@ const LogoutButton = () => {
 
   const handleLogout = async () => {
     try {
-      await api.post("/auth/logout/");
-      logout();
-      localStorage.removeItem("token");
+      const token = localStorage.getItem("token"); // Get token from localStorage
+      await api.post("/auth/logout/", {}, {
+        headers: {
+          'Authorization': `Token ${token}` // Include token in Authorization header
+        }
+      });
+      await logout();
       navigate("/");
       // Handle successful logout (e.g., redirect user)
     } catch (error) {
