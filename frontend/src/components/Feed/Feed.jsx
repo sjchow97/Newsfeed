@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Layout/Navbar";
-import Sidebar from "../Layout/Sidebar";
 import "./Feed.css";
 
 function Feed() {
@@ -55,51 +53,46 @@ function Feed() {
   };
 
   return (
-    <React.Fragment>
-      <Navbar />
-      <Sidebar />
-      <div className="posts">
-        {articles.length > 0 ? (
-          articles.map((article) => (
-            <div className="post" key={article.id}>
-              <h1>{article.title}</h1>
-              <p>{new Date(article.published_parsed).toLocaleDateString()}</p>
-              <p>{article.summary_detail.value}</p>
-              <div className="post-buttons">
-                <button onClick={() => handleLike(article.id)}>
-                  {likes[article.id] ? "Unlike" : "Like"}{" "}
-                  {likes[article.id] || 0}
-                </button>
-                <button onClick={() => handleDislike(article.id)}>
-                  {dislikes[article.id] ? "Undislike" : "Dislike"}{" "}
-                  {dislikes[article.id] || 0}
-                </button>
-                <button onClick={() => toggleCommentInput(article.id)}>
-                  Comment
-                </button>
-                <button
-                  onClick={() => alert("Share functionality to be implemented")}
-                >
-                  Share
-                </button>
-              </div>
-              {showCommentInput[article.id] && (
-                <div>
-                  <input
-                    className="comment-in"
-                    type="text"
-                    placeholder="Write a comment..."
-                  />
-                  <button className="submit">Post</button>
-                </div>
-              )}
+    <div className="posts">
+      {articles.length > 0 ? (
+        articles.map((article) => (
+          <div className="post" key={article.id}>
+            <h1>{article.title}</h1>
+            <p>{new Date(article.published_parsed).toLocaleDateString()}</p>
+            <p>{article.summary_detail.value}</p>
+            <div className="post-buttons">
+              <button onClick={() => handleLike(article.id)}>
+                {likes[article.id] ? "Unlike" : "Like"} {likes[article.id] || 0}
+              </button>
+              <button onClick={() => handleDislike(article.id)}>
+                {dislikes[article.id] ? "Undislike" : "Dislike"}{" "}
+                {dislikes[article.id] || 0}
+              </button>
+              <button onClick={() => toggleCommentInput(article.id)}>
+                Comment
+              </button>
+              <button
+                onClick={() => alert("Share functionality to be implemented")}
+              >
+                Share
+              </button>
             </div>
-          ))
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
-    </React.Fragment>
+            {showCommentInput[article.id] && (
+              <div>
+                <input
+                  className="comment-in"
+                  type="text"
+                  placeholder="Write a comment..."
+                />
+                <button className="submit">Post</button>
+              </div>
+            )}
+          </div>
+        ))
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
   );
 }
 
