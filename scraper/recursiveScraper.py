@@ -5,11 +5,51 @@ import urllib2
 import HTMLParser
 import re
 import csv
+import time
+
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+# Set the Django settings module environment variable
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'newsfeed.settings')
+
+# Import Django and set up the environment
+import django
+django.setup()
+from rss.models import RssSource
+
+import sqlite3
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Append '/backend' to the base directory
+backend_dir = os.path.join(BASE_DIR, 'backend')
+
+# Join the path to the SQLite database file inside the 'backend' directory
+db_path = os.path.join(backend_dir, 'db.sqlite3')
+
+# if os.path.exists(db_path):
+#     # Get the file permissions
+#     permissions = oct(os.stat(db_path).st_mode)[-3:]
+#     print("Permissions of {}: {}".format(db_path, permissions))
+# else:
+#     print("Database file does not exist at the specified path.")
+
+conn = sqlite3.connect(db_path)
+cursor = conn.cursor()
+# cursor.execute("SELECT * FROM rss_rsssource;")
+# rows = cursor.fetchall()
+# for row in rows:
+#     print(row)
+
+
+
 
 checked_urls = set()
 found_rss_feeds = set()
 
-def find_rss_feed(url, municipality):
+def find_rss_feed(url, municipality, province):
     global checked_urls
     global found_rss_feeds
     try:
@@ -50,18 +90,23 @@ def find_rss_feed(url, municipality):
                                         print("BASE URL: " + full_rss_url)
                                         print("NAME: " + soup.title.string)
                                         # location needs to be based on csv file inputs
-                                        print("LOCATION: " + municipality)
-
-                                        # create new RssSource object
-                                        # rss_source = RssSource.objects.create(url=full_rss_url, source_name=soup.title.string, location=municipality)
-                                        # rss_source.save()
+                                        print("LOCATION: " + municipality + ", " + province)
 
                                         items = soup.find_all('item')
                                         print "NUMBER OF ITEMS: " + str(len(items))
 
+                                        # if there are items in the RSS feed, create a new RssSource object and save it to the database
                                         if len(items) > 0:
-                                            rss_source = RssSource.objects.create(url=full_rss_url, source_name=soup.title.string, location=municipality)
-                                            rss_source.save()
+                                            
+                                            # create a new RssSource object
+                                            rss_source = RssSource()
+                                            rss_source.source_name = soup.title.string
+                                            rss_source.url = full_rss_url
+                                            rss_source.location = municipality + ", " + province
+
+                                            # TODO: UPDATE THE LOCATIONS TO HAVE PROVINCE AS WELL, need to change the function params
+                                            cursor.execute("INSERT INTO rss_rsssource (source_name, url, location) VALUES (?, ?, ?);", (rss_source.source_name, rss_source.url, rss_source.location))
+                                            conn.commit()
 
                                         # parse each <item> tag for fields that will be displayed on the news feed
                                         for item in items:
@@ -91,7 +136,7 @@ def find_rss_feed(url, municipality):
                                     else:
                                         
                                         # recursive search as some sites will have multiple feeds listed on the /rss page such as coquitlam https://www.coquitlam.ca/rss.aspx
-                                        find_rss_feed(full_rss_url, municipality)
+                                        find_rss_feed(full_rss_url, municipality, province)
                                         
                             except urllib2.HTTPError as e:
                             # If an HTTP error occurs, print the status code and error message
@@ -103,16 +148,27 @@ def find_rss_feed(url, municipality):
     except Exception as e:
         print('Error occurred while fetching {}: {}'.format(url, e))
 
-def crawl_website(start_url, municipality):
+def crawl_website(start_url, municipality, province):
     visited_urls = set()
     queue = [start_url]
 
-    print 'Crawling website for: ' + municipality
+    print 'Crawling website for: ' + municipality + ', ' + province
+
+    # For demo purposes, each site will be crawled for 20 seconds, set timeout to larger value when seeding
+    start_time = time.time()
+    timeout = 30
 
     while queue:
+
+        # Check if the time elapsed for crawling this site is greater than the timeout value
+        if time.time() - start_time > timeout:
+            print('Timeout reached. Stopping the crawl.')
+            break
+
+
         url = queue.pop(0)
         if url not in visited_urls:
-            find_rss_feed(url, municipality)
+            find_rss_feed(url, municipality, province)
             visited_urls.add(url)
             try:
                 response = requests.get(url)
@@ -157,8 +213,12 @@ with open('sample.csv', 'r') as file:
                 # Find the <a> tag within the <span> tags with class "official-website" and get the href attribute
                 link = soup.find('span', class_='official-website').find('a').get('href')
                 
-                crawl_website(link, municipality)
+                crawl_website(link, municipality.replace("_", " "), province.replace("_", " "))
 
         except urllib2.HTTPError as e:
         # If an HTTP error occurs, print the status code and error message
             print("HTTP Error:", e.code, e.reason)
+
+
+cursor.close()
+conn.close()
