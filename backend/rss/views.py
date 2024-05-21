@@ -47,10 +47,18 @@ def read_feeds(request):
     }
     return Response(context)
 
+# Gets all the comments for a specific post
+# GET /rss/get_comments_for_post/<reference_id>/
+# params: request object, reference_id
+# returns: response object with body containing JSON object containing the comments for the post (array of comments)
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def get_comments_for_post(request, reference_id):
-    reference = PostReference.objects.get(reference_id=reference_id)
+    try:
+        reference = PostReference.objects.get(reference_id=reference_id)
+    except PostReference.DoesNotExist:
+        return Response({'error': 'PostReference not found'}, status=404)
+
     comments = get_comments(reference)
     post_comment_serializer = PostCommentSerializer(comments, many=True)
     return Response(post_comment_serializer.data)
