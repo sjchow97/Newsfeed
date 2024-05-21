@@ -13,6 +13,7 @@ from .comment_model_manager import get_comments
 from .reaction_model_manager import get_reactions
 from .models import PostReference, PostComment
 from .serializers import PostReferenceSerializer, PostCommentSerializer
+from bs4 import BeautifulSoup
 
 import uuid
 
