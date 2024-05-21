@@ -14,16 +14,20 @@ Web Application:
 
 # Login Accounts
 
-Head to http://localhost:8000/accounts/login/
+Once the Frontend and Backend servers are running locally, navigate to `localhost:3000` to login.
 
 login with one of the test accounts:
 
 user: stanley
+
 pass: password
+
 (locale is Vancouver, BC)
 
 user: lester
+
 pass: password
+
 (locale is Coquitlam, BC)
 
 # Web Application
