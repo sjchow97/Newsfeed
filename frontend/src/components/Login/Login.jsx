@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Login.css";
+import { getCSRFToken } from "../../services/utils";
 import axios from "axios";
 
 const Login = () => {
@@ -19,6 +20,7 @@ const Login = () => {
         { withCredentials: true }
       );
       setMessage(response.data.message);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
       // Handle successful login (e.g., redirect user)
     } catch (error) {
       setMessage(error.response.data.error);
