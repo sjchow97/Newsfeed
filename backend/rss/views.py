@@ -47,6 +47,14 @@ def read_feeds(request):
     }
     return Response(context)
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def get_comments_for_post(request, reference_id):
+    reference = PostReference.objects.get(reference_id=reference_id)
+    comments = get_comments(reference)
+    post_comment_serializer = PostCommentSerializer(comments, many=True)
+    return Response(post_comment_serializer.data)
+
 # Gets all the comments in the database
 # GET /rss/list_comments/
 # params: request object
