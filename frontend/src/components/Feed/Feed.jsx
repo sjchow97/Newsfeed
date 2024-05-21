@@ -5,8 +5,13 @@ import "./Feed.css";
 function Feed() {
   const [articles, setArticles] = useState([]);
 
+  const token = localStorage.getItem("token");
   useEffect(() => {
-    fetch("/demo.json")
+    fetch("http://127.0.0.1:8000/api/rss/read_feeds/", {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
