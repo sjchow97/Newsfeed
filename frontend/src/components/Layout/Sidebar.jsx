@@ -1,5 +1,6 @@
-import React from 'react';
-import '../styles/Sidebar.css';
+import React from "react";
+import LogoutButton from "../LogoutButton";
+import "./Sidebar.css";
 
 function Sidebar() {
   return (
@@ -10,6 +11,7 @@ function Sidebar() {
       <a href="#">News</a>
       <a href="#">Explore</a>
       <a href="#">Settings</a>
+      <LogoutButton />
     </div>
   );
 }

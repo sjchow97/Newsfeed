@@ -1,6 +1,7 @@
 .sidebar {
     width: 300px;
     background-color: #D7F0FF;
+    margin-top: 20px;
     margin-left: 20px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);

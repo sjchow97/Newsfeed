@@ -1,21 +1,43 @@
-import React from 'react';
-import './styles/App.css';
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
-import Post from './components/Post';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import "./styles/App.css";
+import Login from "./components/Login/Login";
+import FeedPageLayout from "./components/Feed/FeedPageLayout";
+import FeedPostLayout from "./components/Feed/FeedPostLayout";
+
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
     <div className="App">
-      <Navbar />
-      <div className="container">
-        <Sidebar />
-        <div className="content">
-          <Post />
-        </div>
-      </div>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route
+          path="/feed"
+          element={
+            <PrivateRoute>
+              <FeedPageLayout />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/feed/:id"
+          element={
+            <PrivateRoute>
+              <FeedPostLayout />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </div>
   );
 }
 
-export default App;
+const WrappedApp = () => (
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);
+
+export default WrappedApp;

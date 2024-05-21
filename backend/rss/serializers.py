@@ -9,7 +9,7 @@ class RssSourceSerializer(serializers.ModelSerializer):
 
 class PostReferenceSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('reference_id', 'source_id')
+        fields = ('reference_id')
         model = PostReference  
 
 class PostCommentSerializer(serializers.ModelSerializer):

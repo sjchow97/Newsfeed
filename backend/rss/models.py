@@ -14,7 +14,6 @@ class RssSource(models.Model):
 
 class PostReference(models.Model):
     reference_id = models.CharField(max_length=200, primary_key=True)
-    source_id = models.IntegerField()
 
     def __str__(self):
         return self.reference_id
