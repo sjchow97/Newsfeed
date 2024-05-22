@@ -10,3 +10,4 @@ def add_reaction(reference_id, user, vote):
     reaction.vote = vote
     reaction.save()
     return reaction
+

@@ -7,12 +7,13 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework import status
 
 from .feed_reader import get_feeds, feed_to_json
 from .comment_model_manager import get_comments
-from .reaction_model_manager import get_reactions
+from .reaction_model_manager import get_reactions, add_reaction, get_reaction_counts, user_reaction
 from .models import PostReference, PostComment
-from .serializers import PostReferenceSerializer, PostCommentSerializer
+from .serializers import PostReferenceSerializer, PostCommentSerializer, PostReactionSerializer
 from bs4 import BeautifulSoup
 
 import re
@@ -20,6 +21,18 @@ import uuid
 import requests
 
 REFERENCE_NAMESPACE = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
+
+@api_view(['POST'])
+def like_post(request, reference_id):
+    user = request.user
+    reaction = add_reaction(reference_id, user, 1)
+    return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def dislike_post(request, reference_id):
+    user = request.user
+    reaction = add_reaction(reference_id, user, -1)
+    return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
 
 # Gets all the RSS feed entries depending on the user's location, as well as the comments and reactions for the related posts
 # GET /rss/read_feeds/
@@ -30,7 +43,7 @@ REFERENCE_NAMESPACE = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
 def read_feeds(request):
     feeds = get_feeds(request.user.userprofile.location)
     comment_dict = {}
-    # reaction_dict = {}
+    reaction_dict = {}
     for entry in feeds.entries:
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
         entry['uuid'] = reference_id
@@ -57,12 +70,18 @@ def read_feeds(request):
             post_comment_serializer = PostCommentSerializer(comments, many=True)
             # reactions = get_reactions(reference)
             comment_dict[str(reference_id)] = post_comment_serializer.data
-            # reaction_dict[str(reference_id)] = reactions
+            reaction_counts = get_reaction_counts(reference_id)
+            user_vote = user_reaction(reference_id, request.user)
+            reaction_dict[str(reference_id)] = {
+                'likes': reaction_counts['likes'],
+                'dislikes': reaction_counts['dislikes'],
+                'user_vote': user_vote
+            }
     json_feeds = feed_to_json(feeds)
     context = {
-        "feed_posts": json_feeds["entries"], 
+        "feed_posts": json_feeds["entries"],
         "post_comments": comment_dict,
-        # "post_reactions": reaction_dict,
+        "post_reactions": reaction_dict,
     }
     return Response(context)
 
