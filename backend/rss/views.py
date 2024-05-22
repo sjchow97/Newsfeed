@@ -12,7 +12,7 @@ from rest_framework.pagination import PageNumberPagination
 from .feed_reader import get_feeds, feed_to_json
 from .comment_model_manager import get_comments
 from .reaction_model_manager import get_reactions
-from .models import PostReference, PostComment
+from .models import PostReference, PostComment, PostReaction
 from .serializers import PostReferenceSerializer, PostCommentSerializer
 from bs4 import BeautifulSoup
 
@@ -109,7 +109,8 @@ def create_post_comment(request):
         # Request body should contain post_reference data of the post they are commenting on
         post_reference_data = request.data.pop('post_reference', None)
         if post_reference_data is not None:
-            post_reference, created = PostReference.objects.get_or_create(reference_id=post_reference_data['reference_id'], defaults=post_reference_data)
+            post_reference, created = PostReference.objects.get_or_create(
+                reference_id=post_reference_data['reference_id'], defaults=post_reference_data)
             data = request.data.copy()
             data.update({'reference': post_reference.reference_id})
             data.update({'parent': None})
@@ -189,11 +190,23 @@ def delete_post_comment(request, comment_id):
     if request.method == 'DELETE':
         try:
             post_comment = PostComment.objects.get(comment_id=comment_id)
+            reference = post_comment.reference
         except PostComment.DoesNotExist:
             return Response({'error': 'PostComment not found'}, status=404)
 
         if request.user.is_authenticated and post_comment.user == request.user:
-            post_comment.delete()
+            if post_comment.replies.exists():
+                post_comment.content = 'POST DELETED'
+                if post_comment.post_title:
+                    post_comment.post_title = None
+                post_comment.save()
+            else:
+                post_comment.delete()
+            
+            # If no other comment or reaction exists for the post, delete the post reference as well
+            if not (PostComment.objects.filter(reference=reference).exists() or 
+                    PostReaction.objects.filter(reference=reference).exists()):
+                reference.delete()
             return Response({'message': 'Comment deleted successfully'})
         else:
             return Response({'error': 'User does not have permission to delete this comment'}, status=403)
