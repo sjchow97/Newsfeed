@@ -4,7 +4,6 @@ from urlparse import urljoin, urlparse
 import urllib2
 import HTMLParser
 import re
-import csv
 import time
 import openpyxl
 import os
@@ -29,7 +28,7 @@ db_path = os.path.join(BASE_DIR, 'db.sqlite3')
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Clear the RssSource table before inserting new data
+# Clear the RssSource table before inserting new data to avoid duplicates when reseeding
 cursor.execute("DELETE FROM rss_rsssource WHERE source_id >= 0;")
 
 checked_urls = set()
@@ -76,11 +75,10 @@ def find_rss_feed(url, municipality, province):
                                         # These fields are related to the RssSource model
                                         print("BASE URL: " + full_rss_url)
                                         print("NAME: " + soup.title.string)
-                                        # location needs to be based on csv file inputs
                                         print("LOCATION: " + municipality + ", " + province)
 
                                         items = soup.find_all('item')
-                                        print "NUMBER OF ITEMS: " + str(len(items))
+                                        print "NUMBER OF NEWS ITEMS: " + str(len(items))
 
                                         # if there are items in the RSS feed, create a new RssSource object and save it to the database
                                         if len(items) > 0:
@@ -91,7 +89,7 @@ def find_rss_feed(url, municipality, province):
                                             rss_source.url = full_rss_url
                                             rss_source.location = municipality + ", " + province
 
-                                            # TODO: UPDATE THE LOCATIONS TO HAVE PROVINCE AS WELL, need to change the function params
+                                            
                                             cursor.execute("INSERT INTO rss_rsssource (source_name, url, location) VALUES (?, ?, ?);", (rss_source.source_name, rss_source.url, rss_source.location))
                                             conn.commit()
 
