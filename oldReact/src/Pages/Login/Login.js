@@ -77,7 +77,6 @@ var Login = React.createClass({
           <button className="button" type="submit">
             Login
           </button>
-          <Link to="feed">Redirect</Link>
           {this.state.message && <p>{this.state.message}</p>}
         </form>
       </div>
