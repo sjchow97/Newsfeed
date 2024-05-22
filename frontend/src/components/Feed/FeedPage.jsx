@@ -5,6 +5,8 @@ import "./FeedPage.css";
 
 function FeedPage() {
   const [articles, setArticles] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const token = localStorage.getItem("token");
   useEffect(() => {
@@ -24,8 +26,6 @@ function FeedPage() {
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
-
-  console.log(articles);
 
   return (
     <div className="posts">
