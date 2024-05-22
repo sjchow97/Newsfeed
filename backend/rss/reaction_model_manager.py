@@ -3,21 +3,16 @@ from .models import PostReaction
 def get_reactions(reference_id):
     return PostReaction.objects.filter(reference=reference_id)
 
-#def add_reaction(reference_id, user, vote):
-    #reaction = PostReaction()
-    #reaction.reference = reference_id
-    #reaction.user = user
-    #reaction.vote = vote
-    #reaction.save()
-    #return reaction
-
-def add_reaction(reference_id, user, vote):
+def add_reaction(reference, user, vote):
     reaction, _ = PostReaction.objects.update_or_create(
-        reference=reference_id,
+        reference=reference,
         user=user,
         defaults={'vote': vote},
     )
     return reaction
+
+def remove_reaction(reference, user):
+    PostReaction.objects.filter(reference=reference, user=user).delete()
 
 def get_reaction_counts(reference_id):
     reactions = get_reactions(reference_id)

@@ -22,6 +22,8 @@ class PostCommentSerializer(serializers.ModelSerializer):
         model = PostComment
 
 class PostReactionSerializer(serializers.ModelSerializer):
+    reference = serializers.PrimaryKeyRelatedField(queryset=PostReference.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     class Meta:
         fields = ('reaction_id', 'reference', 'vote', 'user')
         model = PostReaction
