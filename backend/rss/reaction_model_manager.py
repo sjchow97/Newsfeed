@@ -4,14 +4,14 @@ def get_reactions(reference_id):
     return PostReaction.objects.filter(reference=reference_id)
 
 def add_reaction(reference_id, user, vote):
-    #reaction = PostReaction()
-    #reaction.reference = reference_id
-    #reaction.user = user
-    #reaction.vote = vote
-    #reaction.save()
-    #return reaction
-    
+    reaction = PostReaction()
+    reaction.reference = reference_id
+    reaction.user = user
+    reaction.vote = vote
+    reaction.save()
+    return reaction
 
+def add_reaction(reference_id, user, vote):
     #check if the user has already reacted 
     existing_reaction = PostReaction.objects.filter(reference=reference_id,user = user).first()
     if existing_reaction:
