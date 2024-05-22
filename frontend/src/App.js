@@ -1,25 +1,43 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Route, Routes } from "react-router-dom";
+import "./styles/App.css";
+import Login from "./components/Login/Login";
+import FeedPageLayout from "./components/Feed/FeedPageLayout";
+import FeedPostLayout from "./components/Feed/FeedPostLayout";
+
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route
+          path="/feed"
+          element={
+            <PrivateRoute>
+              <FeedPageLayout />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/feed/:id"
+          element={
+            <PrivateRoute>
+              <FeedPostLayout />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </div>
   );
 }
 
-export default App;
+const WrappedApp = () => (
+  <AuthProvider>
+    <App />
+  </AuthProvider>
+);
+
+export default WrappedApp;

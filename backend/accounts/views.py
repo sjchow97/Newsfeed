@@ -6,37 +6,98 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from models import UserProfile
 
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.views.decorators.csrf import ensure_csrf_cookie
+from rest_framework.authtoken.models import Token
+
 # Create your views here.
 
-def Login(request):
-    
-    # Create a new user
-    # new_user = User.objects.create_user(username='username', email='email@example.com', password='password')
+@ensure_csrf_cookie
+def csrf(request):
+    return Response({'csrfToken': request.COOKIES.get('csrftoken')})
 
-    # new_profile = UserProfile.objects.create(user=new_user, location='YellowKnife')
-    # new_profile.save()
-
-    next = request.GET.get('next', '/home/')
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+class Login(APIView):
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
         user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request,user)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                'message': 'Login successful', 
+                'user': {
+                    'username': user.username,
+                    'locale': user.userprofile.location
+                },
+                'token': token.key
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class Logout(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = (IsAuthenticated,)
+    
+    def post(self, request):
+        logout(request)
+        return Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
+        
+# def Login(request):
+    
+#     # Create a new user
+#     # new_user = User.objects.create_user(username='username', email='email@example.com', password='password')
+
+#     # new_profile = UserProfile.objects.create(user=new_user, location='YellowKnife')
+#     # new_profile.save()
+
+#     next = request.GET.get('next', '/home/')
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         password = request.POST['password']
+#         user = authenticate(username=username, password=password)
     
 
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(next)
-        else:
-            return HttpResponse('Invalid login')
-    return render(request, 'login.html', {'redirect_to': next})
+#         if user is not None:
+#             login(request, user)
+#             return HttpResponseRedirect(next)
+#         else:
+#             return HttpResponse('Invalid login')
+#     return render(request, 'login.html', {'redirect_to': next})
 
-def Logout(request):
-    logout(request)
-    return HttpResponseRedirect(settings.LOGIN_URL)
+# def Logout(request):
+#     logout(request)
+#     return HttpResponseRedirect(settings.LOGIN_URL)
 
-@login_required
-def Home(request):
-    userprofile = UserProfile.objects.get(user=request.user)
-    print userprofile.location
+# @login_required
+# def Home(request):
+#     userprofile = UserProfile.objects.get(user=request.user)
+#     print userprofile.location
 
-    return render(request, 'home.html', {'user': request.user, 'location': userprofile.location})
+#     return render(request, 'home.html', {'user': request.user, 'location': userprofile.location})
+
+# @api_view(['POST'])
+# def login(request):
+#     if request.method == 'POST': 
+#         username = request.data.get('username')
+#         password = request.data.get('password')
+#         user = authenticate(username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return Response({'success': 'User logged in'})
+#         else:
+#             return Response({'error': 'Invalid login'}, status=401)
+
+# @api_view(['POST'])
+# def logout(request):
+#     if request.method == 'POST':
+#         logout(request)
+#         return Response({'success': 'User logged out'})
+
+

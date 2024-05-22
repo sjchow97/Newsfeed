@@ -1,0 +1,10 @@
+/* General App styling */
+.App {
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  margin-top: 30px;
+}
