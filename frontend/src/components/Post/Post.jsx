@@ -3,36 +3,37 @@ import { v5 as uuidv5 } from 'uuid';
 
 const REFERENCE_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
-function Post({ article }) {
+function Post({ article, reactions }) {
   const { published_parsed, title, summary, base, link, published } = article;
   const uuid = uuidv5(`${title}`, REFERENCE_NAMESPACE);
 
-  const [likes, setLikes] = useState({});
-  const [dislikes, setDislikes] = useState({});
+  const [likeCount, setLikeCount] = useState(reactions.likes);
+  const [dislikeCount, setDislikeCount] = useState(reactions.dislikes);
+  const [userVote, setUserVote] = useState(reactions.user_vote);
   const [showCommentInput, setShowCommentInput] = useState({});
 
-  const handleLike = (id) => {
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [id]: !prevLikes[id] ? 1 : 0,
-    }));
-
-    setDislikes((prevDislikes) => ({
-      ...prevDislikes,
-      [id]: prevDislikes[id] ? 0 : prevDislikes[id],
-    }));
+  const handleLike = () => {
+    fetch(`/api/like_post/${uuid}/`, { method: 'POST' })
+        .then(response => response.json())
+        //.then(data => {
+          .then(() => {
+            setLikeCount(prev => prev + (userVote === 1 ? 0 : 1));
+            setDislikeCount(prev => prev - (userVote === -1 ? 1 : 0));
+            setUserVote(1);
+        })
+        .catch(error => console.error('Error:', error));
   };
 
-  const handleDislike = (id) => {
-    setDislikes((prevDislikes) => ({
-      ...prevDislikes,
-      [id]: !prevDislikes[id] ? 1 : 0,
-    }));
-
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [id]: prevLikes[id] ? 0 : prevLikes[id],
-    }));
+  const handleDislike = () => {
+    fetch(`/api/dislike_post/${uuid}/`, { method: 'POST' })
+        .then(response => response.json())
+       // .then(data => {
+          .then(() => {
+            setDislikeCount(prev => prev + (userVote === -1 ? 0 : 1));
+            setLikeCount(prev => prev - (userVote === 1 ? 1 : 0));
+            setUserVote(-1);
+        })
+        .catch(error => console.error('Error:', error));
   };
 
   const toggleCommentInput = (id) => {
@@ -51,12 +52,11 @@ function Post({ article }) {
         <p>Link to article</p>
       </a>
       <div className="post-buttons">
-        <button onClick={() => handleLike(article.id)}>
-          {likes[article.id] ? "Unlike" : "Like"} {likes[article.id] || 0}
+        <button onClick={handleLike} style={{ color: userVote === 1 ? 'blue' : 'black' }}>
+          Like {likeCount}
         </button>
-        <button onClick={() => handleDislike(article.id)}>
-          {dislikes[article.id] ? "Undislike" : "Dislike"}{" "}
-          {dislikes[article.id] || 0}
+        <button onClick={handleDislike} style={{ color: userVote === -1 ? 'red' : 'black' }}>
+          Dislike {dislikeCount}
         </button>
         <button onClick={() => toggleCommentInput(article.id)}>Comment</button>
         <button onClick={() => alert("Share functionality to be implemented")}>
