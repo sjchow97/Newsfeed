@@ -23,12 +23,14 @@ import requests
 REFERENCE_NAMESPACE = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
 def like_post(request, reference_id):
     user = request.user
     reaction = add_reaction(reference_id, user, 1)
     return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
 def dislike_post(request, reference_id):
     user = request.user
     reaction = add_reaction(reference_id, user, -1)
