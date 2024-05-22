@@ -7,6 +7,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.pagination import PageNumberPagination
 
 from .feed_reader import get_feeds, feed_to_json
 from .comment_model_manager import get_comments
@@ -15,7 +16,6 @@ from .models import PostReference, PostComment
 from .serializers import PostReferenceSerializer, PostCommentSerializer
 from bs4 import BeautifulSoup
 
-import re
 import uuid
 import requests
 
@@ -31,15 +31,18 @@ def read_feeds(request):
     feeds = get_feeds(request.user.userprofile.location)
     comment_dict = {}
     # reaction_dict = {}
-    for entry in feeds.entries:
+
+    # Paginate entries
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    entries = paginator.paginate_queryset(feeds.entries, request)
+
+    for entry in entries:
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
         entry['uuid'] = reference_id
-        # get meta info
-        url_pattern = re.compile(r'https?://\S+')
-        url_match = url_pattern.search(entry.link)
-        if url_match:
-            url = url_match.group()
-            response = requests.get(url)
+
+        if entry.get('link'):
+            response = requests.get(entry['link'])
 
             if response.status_code == 200:
                 html_content = response.content
@@ -48,9 +51,8 @@ def read_feeds(request):
                 image = soup.find('meta', property='og:image')
 
                 entry['image'] = image['content'] if image else ''
-        else:
-            url = None
-
+        
+        # Check if the post references exist in the database (which means comments and/or reactions exist for the post)
         if PostReference.objects.filter(reference_id=reference_id).exists():
             reference = PostReference.objects.get(reference_id=reference_id)
             comments = get_comments(reference)
@@ -58,9 +60,10 @@ def read_feeds(request):
             # reactions = get_reactions(reference)
             comment_dict[str(reference_id)] = post_comment_serializer.data
             # reaction_dict[str(reference_id)] = reactions
-    json_feeds = feed_to_json(feeds)
+        
+    json_feeds = feed_to_json(entries)
     context = {
-        "feed_posts": json_feeds["entries"], 
+        "feed_posts": json_feeds, 
         "post_comments": comment_dict,
         # "post_reactions": reaction_dict,
     }
