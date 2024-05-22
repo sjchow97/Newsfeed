@@ -1,24 +1,23 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
+var React = require("react");
+var ReactDOM = require("react-dom");
+var Router = require("react-router").Router;
+var Route = require("react-router").Route;
+var createHistory = require("history").createHistory;
+var App = require("./App");
+var Login = require("./Pages/Login/Login");
+var FeedPage = require("./Pages/Feed/FeedPage");
+require("./index.css");
 
-ReactDOM.render(<App />, document.getElementById("root"));
+// Create a browser history object
+var history = createHistory();
 
-// import React from 'react';
-// import ReactDOM from 'react-dom';
-// import { Router, Route, hashHistory } from 'react-router';
-// import App from './App';
-// import Home from './Home';
-// import About from './About';
-// import Contact from './Contact';
+// Define your routes
+var routes = (
+  <Router history={history}>
+    <Route path="/" component={Login} />
+    <Route path="feed" component={FeedPage} />
+  </Router>
+);
 
-// ReactDOM.render(
-//   <Router history={hashHistory}>
-//     <Route path="/" component={App}>
-//       <Route path="home" component={Home} />
-//       <Route path="about" component={About} />
-//       <Route path="contact" component={Contact} />
-//     </Route>
-//   </Router>,
-//   document.getElementById('root')
-// );
+// Render your routes to the DOM
+ReactDOM.render(routes, document.getElementById("root"));

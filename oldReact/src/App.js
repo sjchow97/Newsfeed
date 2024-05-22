@@ -1,24 +1,25 @@
-import React from "react";
+var React = require("react");
+var Route = require("react-router").Route;
+var Router = require("react-router").Router;
+var IndexRoute = require("react-router").IndexRoute;
+var browserHistory = require("react-router").browserHistory;
+var Login = require("./Pages/Login/Login");
+// var AuthProvider = require("./Context/AuthContext").AuthProvider;
+// var FeedPostLayout = require("../Context/Feed/FeedPostLayout");
+var FeedPage = require("./Pages/Feed/FeedPage");
+var PrivateRoute = require("./Pages/PrivateRoute");
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { count: 0 };
-  }
-
-  increment = () => {
-    this.setState({ count: this.state.count + 1 });
-  };
-
-  render() {
+var App = React.createClass({
+  render: function () {
     return (
-      <div>
-        <h1>Hello, React 0.14!</h1>
-        <p>Count: {this.state.count}</p>
-        <button onClick={this.increment}>Increment</button>
+      <div className="App">
+        <Router history={browserHistory}>
+          <Route path="/" component={Login} />
+          <Route path="/feed" component={FeedPage} />
+        </Router>
       </div>
     );
-  }
-}
+  },
+});
 
-export default App;
+module.exports = App;

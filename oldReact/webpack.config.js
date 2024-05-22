@@ -16,6 +16,22 @@ module.exports = {
           loader: "babel-loader",
         },
       },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
+      },
+      {
+        test: /\.(png|jpg|gif|svg)$/,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192, // Convert images < 8kb to base64 strings
+              name: "Images/[name].[ext]", // Output images to images folder
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [
