@@ -29,19 +29,11 @@ backend_dir = os.path.join(BASE_DIR, 'backend')
 # Join the path to the SQLite database file inside the 'backend' directory
 db_path = os.path.join(backend_dir, 'db.sqlite3')
 
-# if os.path.exists(db_path):
-#     # Get the file permissions
-#     permissions = oct(os.stat(db_path).st_mode)[-3:]
-#     print("Permissions of {}: {}".format(db_path, permissions))
-# else:
-#     print("Database file does not exist at the specified path.")
-
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
-# cursor.execute("SELECT * FROM rss_rsssource;")
-# rows = cursor.fetchall()
-# for row in rows:
-#     print(row)
+
+# Clear the RssSource table before inserting new data
+cursor.execute("DELETE FROM rss_rsssource WHERE source_id >= 0;")
 
 
 
@@ -126,10 +118,6 @@ def find_rss_feed(url, municipality, province):
                                             else:
                                                 print "Publication date: " + pub_date.get_text()
 
-                                            # retrieving link of RSS feed items needs work, will print out as empty string
-                                            #print (item.link).get_text()
-                                            #print "Link: " + link.get_text()
-
                                             # unescape the description to remove any html entities and encode it to utf-8
                                             unescaped_description = (HTMLParser.HTMLParser().unescape(description)).encode('utf-8')
                                             print "Description: " + unescaped_description
@@ -154,9 +142,9 @@ def crawl_website(start_url, municipality, province):
 
     print 'Crawling website for: ' + municipality + ', ' + province
 
-    # For demo purposes, each site will be crawled for 20 seconds, set timeout to larger value when seeding
+    # For demo purposes, each site will be crawled for 30 seconds, set timeout to larger value to increase number of pages crawled at expense of runtime
     start_time = time.time()
-    timeout = 30
+    timeout = 45
 
     while queue:
 
@@ -188,7 +176,7 @@ def crawl_website(start_url, municipality, province):
 
 
 # Read the CSV file containing the municipalities, search for the Wikipedia page of each municipality, and find the official website, performs a recursive crawl for RSS feeds
-with open('sample.csv', 'r') as file:
+with open('municipalities.csv', 'r') as file:
     # Create a CSV reader object
     csv_reader = csv.reader(file)
     
@@ -218,6 +206,24 @@ with open('sample.csv', 'r') as file:
         except urllib2.HTTPError as e:
         # If an HTTP error occurs, print the status code and error message
             print("HTTP Error:", e.code, e.reason)
+
+
+# Read the CSV file containing the media outlets, search for the official website, and perform a recursive crawl for RSS feeds
+with open('media_outlets.csv', 'r') as file:
+    # Create a CSV reader object
+    csv_reader = csv.reader(file)
+
+    for row in csv_reader:
+
+        url = row[0]
+        municipality = row[1]
+        province = row[2]
+
+        try:
+            crawl_website(url, municipality, province)
+        except urllib2.HTTPError as e:
+            # If an HTTP error occurs, print the status code and error message
+                print("HTTP Error:", e.code, e.reason)
 
 
 cursor.close()
