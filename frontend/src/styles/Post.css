@@ -26,6 +26,9 @@
 }
 
 .post-buttons button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: white;
   color: black;
   padding: 10px 20px;
@@ -52,7 +55,7 @@
   width: 700px;
 }
 
-.submit{
+.submit {
   background-color: white;
   color: black;
   padding: 10px;

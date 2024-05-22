@@ -1,63 +1,109 @@
 .navbar {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #59ACE8;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.logo {
+  width: 300px;
+  height: auto;
+  margin-right: 20px;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.nav-buttons button {
+  background-color: #C5F0FE;
+  border: none;
+  color: black;
+  padding: 10px 20px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bolder;
+  transition: transform 0.2s;
+}
+
+.nav-buttons button:hover {
+  background-color: rgb(40, 144, 255);
+  color: white;
+  transform: scale(1.07);
+  transition: transform 0.2s;
+}
+
+.profile-notifications {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.notifications-button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Media Queries */
+@media (max-width: 767px) {
+  .navbar {
+    flex-direction: row;
     align-items: center;
-    padding: 15px 20px;
-    background-color: #59ACE8;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
-  
+
   .logo {
-    width: 350px;
-    height: auto;
-    margin-right: 20px;
+    width: 200px;
+    margin-right: 0;
   }
-  
+
   .nav-buttons {
-    display: flex;
-    gap: 20px;
-  }
-  
-  .nav-buttons button {
-    background-color: #C5F0FE;
-    border: none;
-    color: black;
-    padding: 15px 30px;
-    border-radius: 40px;
-    cursor: pointer;
-    font-size: 18px;
-    font-weight: bolder;
-    transition: transform 0.2s;
-  }
-  
-  .nav-buttons button:hover {
-    background-color: rgb(40, 144, 255);
-    color: white;
-    transform: scale(1.07);
-    transition: transform 0.2s;
-  }
-  
-  .profile-notifications {
-    display: flex;
-    align-items: center;
+    display: none;
+    flex-direction: column;
     gap: 10px;
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background-color: #59ACE8;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
-  .notifications-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  .profile {
+
+  .nav-buttons.open {
     display: flex;
-    align-items: center;
   }
-  
-  .profile img {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+
+  .profile-notifications {
+    display: none;
   }
-  
+
+  .hamburger {
+    display: block;
+  }
+}

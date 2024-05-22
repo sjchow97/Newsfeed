@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp, faThumbsDown, faComment, faShare } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Post.css';
 
 function Post() {
@@ -62,17 +64,21 @@ function Post() {
             <p>{article.summary_detail.value}</p>
             <div className="post-buttons">
               <button onClick={() => handleLike(article.id)}>
-                {likes[article.id] ? 'Unlike' : 'Like'} {likes[article.id] || 0}
+                <FontAwesomeIcon icon={faThumbsUp} />
               </button>
               <button onClick={() => handleDislike(article.id)}>
-                {dislikes[article.id] ? 'Undislike' : 'Dislike'} {dislikes[article.id] || 0}
+                <FontAwesomeIcon icon={faThumbsDown} />
               </button>
-              <button onClick={() => toggleCommentInput(article.id)}>Comment</button>
-              <button onClick={() => alert('Share functionality to be implemented')}>Share</button>
+              <button onClick={() => toggleCommentInput(article.id)}>
+                <FontAwesomeIcon icon={faComment} />
+              </button>
+              <button onClick={() => alert('Share functionality to be implemented')}>
+                <FontAwesomeIcon icon={faShare} />
+              </button>
             </div>
             {showCommentInput[article.id] && (
               <div>
-                <input className ="comment-in" type="text" placeholder="Write a comment..." />
+                <input className="comment-in" type="text" placeholder="Write a comment..." />
                 <button className="submit">Post</button>
               </div>
             )}
