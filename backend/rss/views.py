@@ -6,12 +6,14 @@ from django.utils import timezone
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
+
 
 from .feed_reader import get_feeds, feed_to_json
 from .comment_model_manager import get_comments
-from .reaction_model_manager import get_reactions
+from .reaction_model_manager import get_reactions, add_reaction, get_reaction_counts, user_reaction
 from .models import PostReference, PostComment
-from .serializers import PostReferenceSerializer, PostCommentSerializer
+from .serializers import PostReferenceSerializer, PostCommentSerializer, PostReactionSerializer
 
 import uuid
 
@@ -26,7 +28,7 @@ def read_feeds(request):
     feeds = get_feeds(request.user.userprofile.location)
     json_feeds = feed_to_json(feeds)
     comment_dict = {}
-    # reaction_dict = {}
+    reaction_dict = {}
     for entry in feeds.entries:
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
         if PostReference.objects.filter(reference_id=reference_id).exists():
@@ -36,12 +38,43 @@ def read_feeds(request):
             # reactions = get_reactions(reference)
             comment_dict[str(reference_id)] = post_comment_serializer.data
             # reaction_dict[str(reference_id)] = reactions
+
+            # Add reaction counts and user reaction
+            reaction_counts = get_reaction_counts(reference_id)
+            user_vote = user_reaction(reference_id, request.user)
+            reaction_dict[str(reference_id)] = {
+                'likes': reaction_counts['likes'],
+                'dislikes': reaction_counts['dislikes'],
+                'user_vote': user_vote
+            }
     context = {
         "feed_posts": json_feeds["entries"], 
         "post_comments": comment_dict,
-        # "post_reactions": reaction_dict,
+        "post_reactions": reaction_dict,
     }
     return Response(context)
+
+# Handles liking a post
+# POST /rss/like_post/<reference_id>/
+# params: request object
+# returns: response object with the reaction data
+@api_view(['POST'])
+def like_post(request, reference_id):
+    if request.method == 'POST':
+        user = request.user
+        reaction = add_reaction(reference_id, user, 1)
+        return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
+
+# Handles disliking a post
+# POST /rss/dislike_post/<reference_id>/
+# params: request object
+# returns: response object with the reaction data
+@api_view(['POST'])
+def dislike_post(request, reference_id):
+    if request.method == 'POST':
+        user = request.user
+        reaction = add_reaction(reference_id, user, -1)
+        return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
 
 # Gets all the comments in the database
 # GET /rss/list_comments/

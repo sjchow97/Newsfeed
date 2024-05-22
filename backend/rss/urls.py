@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^delete_comment/(?P<comment_id>\d+)/$', views.delete_post_comment, name="delete_comment"),
     url(r'^list_comments/$', views.list_comments, name="list_comments"),
     url(r'^read_feeds/', views.read_feeds, name="read_feeds"),
+    url(r'^like_post/(?P<reference_id>[\w-]+)/$', views.like_post, name="like_post"),
+    url(r'^dislike_post/(?P<reference_id>[\w-]+)/$', views.dislike_post, name="dislike_post"),
 ]
