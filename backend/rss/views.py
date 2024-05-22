@@ -35,7 +35,8 @@ def read_feeds(request):
     # Paginate entries
     paginator = PageNumberPagination()
     paginator.page_size = 10
-    entries = paginator.paginate_queryset(feeds.entries, request)
+    page_number = request.query_params.get('page', 1)  # Get the page number from the query parameters
+    entries = paginator.paginate_queryset(feeds.entries, request, view=None)
 
     for entry in entries:
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
