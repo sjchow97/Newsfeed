@@ -136,6 +136,8 @@ def reply_to_comment(request, comment_id):
     if request.method == 'POST':
         try:
             parent_comment = PostComment.objects.get(comment_id=comment_id)
+            if parent_comment.parent is not None:
+                return Response({'error': 'Cannot reply to a reply'}, status=400)
         except PostComment.DoesNotExist:
             return Response({'error': 'Parent comment not found'}, status=404)
 
