@@ -62,3 +62,11 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border: none;
   }
+  
+  /* center this on the page */
+  .pagination-main {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }

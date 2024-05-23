@@ -1,5 +1,6 @@
 var React = require("react");
 var Post = require("../Post/Post");
+var Pagination = require("../Pagination/Pagination");
 require("./MainFeed.css");
 
 var MainFeed = React.createClass({
@@ -27,6 +28,9 @@ var MainFeed = React.createClass({
       .then(
         function (data) {
           this.setState({ articles: data.feed_posts });
+          this.setState({ totalPages: data.total_pages });
+          this.setState({ currentPage: data.current_page });
+          console.log(data);
         }.bind(this)
       )
       .catch(function (error) {
@@ -34,15 +38,28 @@ var MainFeed = React.createClass({
       });
   },
 
+  handlePageChange: function (pageNumber) {
+    this.setState({ currentPage: pageNumber });
+  },
+
   render: function () {
     return (
-      <div className="posts">
-        {this.state.articles.length > 0 ? (
-          this.state.articles.map(function (item, index) {
-            return <Post key={index} article={item} />;
-          })
-        ) : (
+      <div className="main-feed">
+        {this.state.articles.length === 0 ? (
           <p>Loading...</p>
+        ) : (
+          <div className="posts">
+            {this.state.articles.map(function (article, index) {
+              return <Post key={index} article={article} />;
+            })}
+            <div className="pagination-main">
+              <Pagination
+                totalItems={this.state.articles.length}
+                totalPages={this.state.totalPages}
+                onPageChange={this.handlePageChange}
+              />
+            </div>
+          </div>
         )}
       </div>
     );

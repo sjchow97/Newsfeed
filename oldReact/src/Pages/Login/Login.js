@@ -78,6 +78,7 @@ var Login = React.createClass({
             Login
           </button>
           {this.state.message && <p>{this.state.message}</p>}
+          <Link to="/feed">Go to feed</Link>
         </form>
       </div>
     );

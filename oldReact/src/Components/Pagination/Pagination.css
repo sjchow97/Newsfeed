@@ -1,0 +1,36 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.pagination ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+}
+
+.pagination li {
+  margin: 0 5px;
+}
+
+.pagination a {
+  display: block;
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #000;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.pagination li.active a {
+  background-color: blue;
+  color: white;
+  border-color: blue;
+}
+
+.pagination li.ellipsis {
+  display: block;
+  padding: 10px 15px;
+  color: #999;
+}
