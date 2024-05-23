@@ -43,7 +43,7 @@ class PostReaction(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.vote
+        return str(self.vote)
 
 class CommentReaction(models.Model):
     VOTE_CHOICES = [
