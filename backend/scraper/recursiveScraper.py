@@ -4,9 +4,8 @@ from urlparse import urljoin, urlparse
 import urllib2
 import HTMLParser
 import re
-import csv
 import time
-
+import openpyxl
 import os
 import sys
 
@@ -29,11 +28,8 @@ db_path = os.path.join(BASE_DIR, 'db.sqlite3')
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-# Clear the RssSource table before inserting new data
+# Clear the RssSource table before inserting new data to avoid duplicates when reseeding
 cursor.execute("DELETE FROM rss_rsssource WHERE source_id >= 0;")
-
-
-
 
 checked_urls = set()
 found_rss_feeds = set()
@@ -56,6 +52,7 @@ def find_rss_feed(url, municipality, province):
                 for link in rss_links:
                     rss_url = link.get('href')
                     # Check if the URL contains "rss" or "feed/" (important to check for feed/ otherwise common URLs like /feedback will be included as well)
+                    # Flag the URL as a potential RSS feed if it contains the keywords
                     if rss_url and ('rss' in rss_url.lower() or 'feed/' in rss_url.lower()):
                         full_rss_url = urljoin(url, rss_url)
                         if full_rss_url not in found_rss_feeds:
@@ -69,7 +66,7 @@ def find_rss_feed(url, municipality, province):
                                     html = response.read()
                                     soup = BeautifulSoup(html, 'html.parser')
 
-                                    #find whether or not the content is a RSS feed, which will contain the <rss> or <feed> tag
+                                    # find whether or not the flagged content is a RSS feed, which will contain the <rss> or <feed> tag
                                     if "<rss" in html or "<feed" in html:
                                        
                                         print('RSS feed found on {}: {}'.format(url, full_rss_url))
@@ -78,11 +75,10 @@ def find_rss_feed(url, municipality, province):
                                         # These fields are related to the RssSource model
                                         print("BASE URL: " + full_rss_url)
                                         print("NAME: " + soup.title.string)
-                                        # location needs to be based on csv file inputs
                                         print("LOCATION: " + municipality + ", " + province)
 
                                         items = soup.find_all('item')
-                                        print "NUMBER OF ITEMS: " + str(len(items))
+                                        print "NUMBER OF NEWS ITEMS: " + str(len(items))
 
                                         # if there are items in the RSS feed, create a new RssSource object and save it to the database
                                         if len(items) > 0:
@@ -93,7 +89,7 @@ def find_rss_feed(url, municipality, province):
                                             rss_source.url = full_rss_url
                                             rss_source.location = municipality + ", " + province
 
-                                            # TODO: UPDATE THE LOCATIONS TO HAVE PROVINCE AS WELL, need to change the function params
+                                            
                                             cursor.execute("INSERT INTO rss_rsssource (source_name, url, location) VALUES (?, ?, ?);", (rss_source.source_name, rss_source.url, rss_source.location))
                                             conn.commit()
 
@@ -120,7 +116,7 @@ def find_rss_feed(url, municipality, province):
                                             print "Description: " + unescaped_description
                                     else:
                                         
-                                        # recursive search as some sites will have multiple feeds listed on the /rss page such as coquitlam https://www.coquitlam.ca/rss.aspx
+                                        # if the flagged url is not an rss feed, perform a recursive search into the flagged page's urls as some cases will have multiple feeds listed on the /rss page such as coquitlam https://www.coquitlam.ca/rss.aspx
                                         find_rss_feed(full_rss_url, municipality, province)
                                         
                             except urllib2.HTTPError as e:
@@ -133,15 +129,16 @@ def find_rss_feed(url, municipality, province):
     except Exception as e:
         print('Error occurred while fetching {}: {}'.format(url, e))
 
+
 def crawl_website(start_url, municipality, province):
     visited_urls = set()
     queue = [start_url]
 
-    print 'Crawling website for: ' + municipality + ', ' + province
+    print 'Crawling website: ' + start_url
 
     # For demo purposes, each site will be crawled for 30 seconds, set timeout to larger value to increase number of pages crawled at expense of runtime
     start_time = time.time()
-    timeout = 20
+    timeout = 30
 
     while queue:
 
@@ -172,55 +169,62 @@ def crawl_website(start_url, municipality, province):
                 print 'Error occurred while crawling {}: {}'.format(url, e)
 
 
-# Read the CSV file containing the municipalities, search for the Wikipedia page of each municipality, and find the official website, performs a recursive crawl for RSS feeds
-with open('municipalities.csv', 'r') as file:
-    # Create a CSV reader object
-    csv_reader = csv.reader(file)
+# Open the Excel file containing the list of municipalities and pass the URL of the official website to the crawl_website function
+municipalities = openpyxl.load_workbook('municipalities.xlsx')
+for sheet in municipalities.worksheets:
     
-    for row in csv_reader:
-
-        municipality = row[0]
-        if " " in municipality:
-            municipality = municipality.replace(" ", "_")
-        province = row[1]
-        if " " in province:
-            province = province.replace(" ", "_")
-        
-        wiki_site = "https://en.wikipedia.org/wiki/{},_{}".format(municipality, province)
-
+    # Extract the province from the sheet name
+    province = sheet.title
+    
+    # Skip the header row by starting from row 2
+    for row in sheet.iter_rows(min_row=2):
+    
+        if row[0].hyperlink is None or row[0].value is None:
+            continue
+        # Get the municipality and URL
+        municipality = row[0].value
+        url = row[0].hyperlink.target
+    
         try:
-            response = urllib2.urlopen(wiki_site)
-
+            response = urllib2.urlopen(url)
+    
             if response.getcode() == 200:
                 html = response.read()
                 soup = BeautifulSoup(html, 'html.parser')
-
+    
                 # Find the <a> tag within the <span> tags with class "official-website" and get the href attribute
                 link = soup.find('span', class_='official-website').find('a').get('href')
-                
-                crawl_website(link, municipality.replace("_", " "), province.replace("_", " "))
-
+                    
+                crawl_website(link, municipality, province)
+    
         except urllib2.HTTPError as e:
         # If an HTTP error occurs, print the status code and error message
             print("HTTP Error:", e.code, e.reason)
 
 
-# Read the CSV file containing the media outlets, search for the official website, and perform a recursive crawl for RSS feeds
-with open('media_outlets.csv', 'r') as file:
-    # Create a CSV reader object
-    csv_reader = csv.reader(file)
 
-    for row in csv_reader:
+# Open the Excel file containing the list of media outlets and pass the URL of the official website to the crawl_website function
+media_outlets = openpyxl.load_workbook('media_outlets.xlsx')
+for sheet in media_outlets.worksheets:
 
-        url = row[0]
-        municipality = row[1]
-        province = row[2]
+    # Extract the province from the sheet name
+    province = sheet.title
+
+    # Skip the header row by starting from row 2
+    for row in sheet.iter_rows(min_row=2):
+
+        if row[0].hyperlink is None or row[1].value is None:
+            continue
+        # Get the URL and municipality
+        url = row[0].hyperlink.target
+        municipality = row[1].value
 
         try:
             crawl_website(url, municipality, province)
         except urllib2.HTTPError as e:
             # If an HTTP error occurs, print the status code and error message
-                print("HTTP Error:", e.code, e.reason)
+            print("HTTP Error:", e.code, e.reason)
+
 
 
 cursor.close()
