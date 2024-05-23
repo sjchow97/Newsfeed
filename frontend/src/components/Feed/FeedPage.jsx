@@ -5,7 +5,6 @@ import "./FeedPage.css";
 
 function FeedPage() {
   const [articles, setArticles] = useState([]);
-  const [reactions, setReactions] = useState({});
 
   const token = localStorage.getItem("token");
   useEffect(() => {
@@ -22,20 +21,16 @@ function FeedPage() {
       })
       .then((data) => {
         setArticles(data.feed_posts);
-        setReactions(data.post_reactions);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
-//}, [token]);
-
 
   console.log(articles);
 
   return (
     <div className="posts">
       {articles.length > 0 ? (
-        articles.map((item, index) => ( 
-        <Post key={index} article={item} reactions={reactions[item.uuid]} />))
+        articles.map((item, index) => <Post key={index} article={item} />)
       ) : (
         <p>Loading...</p>
       )}
