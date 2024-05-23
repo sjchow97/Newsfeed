@@ -9,7 +9,16 @@ def add_reaction(reference, user, vote):
         user=user,
         defaults={'vote': vote},
     )
-    return reaction
+
+    # Return updated counts
+    updated_counts = get_reaction_counts(reference.reference_id)
+    updated_likes = updated_counts['likes']
+    updated_dislikes = updated_counts['dislikes']
+    return {
+        'likes': updated_likes,
+        'dislikes': updated_dislikes,
+        'user_vote': reaction.vote,
+    }
 
 def remove_reaction(reference, user):
     PostReaction.objects.filter(reference=reference, user=user).delete()

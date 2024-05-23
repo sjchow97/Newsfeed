@@ -240,8 +240,8 @@ def like_post(request, reference_id):
             return Response({'error': 'reference_id is missing'}, status=400)
         post_reference, created = PostReference.objects.get_or_create(reference_id=reference_id)
         user = request.user
-        reaction = add_reaction(post_reference, user, 1)
-        return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
+        reaction_info = add_reaction(post_reference, user, 1)
+        return Response(reaction_info, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
 
@@ -257,8 +257,8 @@ def dislike_post(request, reference_id):
             return Response({'error': 'reference_id is missing'}, status=400)
         post_reference, created = PostReference.objects.get_or_create(reference_id=reference_id)
         user = request.user
-        reaction = add_reaction(post_reference, user, -1)
-        return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
+        reaction_info = add_reaction(post_reference, user, -1)
+        return Response(reaction_info, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
 

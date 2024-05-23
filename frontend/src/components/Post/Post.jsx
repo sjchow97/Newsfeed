@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { v5 as uuidv5 } from 'uuid';
 
 function Post({ article, reactionData }) {
   const { published_parsed, title, summary, base, link, published, uuid } = article;
@@ -12,15 +11,27 @@ function Post({ article, reactionData }) {
   const [showCommentInput, setShowCommentInput] = useState({});
 
   const handleLike = (id) => {
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [id]: !prevLikes[id] ? 1 : 0,
-    }));
-
-    setDislikes((prevDislikes) => ({
-      ...prevDislikes,
-      [id]: prevDislikes[id] ? 0 : prevDislikes[id],
-    }));
+    fetch(`http://127.0.0.1:8000/api/rss/like_post/${id}/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        // If you need to do something with the response, you can do it here
+        return response.json();
+      })
+      .then((data) => {
+        // Update the state with the new like count
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   const handleDislike = (id) => {
