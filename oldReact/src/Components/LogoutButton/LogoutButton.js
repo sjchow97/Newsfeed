@@ -1,6 +1,7 @@
 var React = require("react");
-var useAuth = require("../Context/AuthContext").useAuth;
-var api = require("../services/api");
+var useAuth = require("../../Context/AuthContext").useAuth;
+var api = require("../../services/api");
+require("./LogoutButton.css");
 
 var LogoutButton = React.createClass({
   handleLogout: function () {
@@ -31,10 +32,10 @@ var LogoutButton = React.createClass({
     }
   },
   render: function () {
-    return React.createElement(
-      "button",
-      { onClick: this.handleLogout },
-      "Logout"
+    return (
+      <button className="logoutButton" onClick={this.handleLogout}>
+        Logout
+      </button>
     );
   },
 });

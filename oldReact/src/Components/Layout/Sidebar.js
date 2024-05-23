@@ -1,5 +1,5 @@
 var React = require("react");
-var LogoutButton = require("../LogoutButton");
+var LogoutButton = require("../LogoutButton/LogoutButton");
 require("./Sidebar.css");
 
 var Sidebar = React.createClass({
