@@ -79,6 +79,8 @@ def read_feeds(request):
         "feed_posts": json_feeds,
         "post_comments": comment_dict,
         "post_reactions": reaction_dict,
+        "current_page": paginator.page.number,
+        "total_pages": paginator.page.paginator.num_pages
     }
     return Response(context)
 
