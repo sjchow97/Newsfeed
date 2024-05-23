@@ -40,7 +40,8 @@ def read_feeds(request):
     entries = paginator.paginate_queryset(feeds.entries, request, view=None)
 
     for entry in entries:
-        reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
+        post_info = "{} {} {}".format(entry.summary_detail.base.encode('utf-8'), entry.title.encode('utf-8'), entry.published.encode('utf-8'))
+        reference_id = uuid.uuid5(REFERENCE_NAMESPACE, post_info)
         entry['uuid'] = reference_id
 
         if entry.get('link'):
