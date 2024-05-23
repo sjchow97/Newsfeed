@@ -134,11 +134,11 @@ def crawl_website(start_url, municipality, province):
     visited_urls = set()
     queue = [start_url]
 
-    print 'Crawling website for: ' + municipality + ', ' + province
+    print 'Crawling website: ' + start_url
 
     # For demo purposes, each site will be crawled for 30 seconds, set timeout to larger value to increase number of pages crawled at expense of runtime
     start_time = time.time()
-    timeout = 25
+    timeout = 30
 
     while queue:
 
@@ -179,11 +179,11 @@ for sheet in municipalities.worksheets:
     # Skip the header row by starting from row 2
     for row in sheet.iter_rows(min_row=2):
     
+        if row[0].hyperlink is None or row[0].value is None:
+            continue
         # Get the municipality and URL
         municipality = row[0].value
         url = row[0].hyperlink.target
-        print ("URL: " + url)
-        print ("Municipality: " + municipality)
     
         try:
             response = urllib2.urlopen(url)
@@ -213,6 +213,8 @@ for sheet in media_outlets.worksheets:
     # Skip the header row by starting from row 2
     for row in sheet.iter_rows(min_row=2):
 
+        if row[0].hyperlink is None or row[1].value is None:
+            continue
         # Get the URL and municipality
         url = row[0].hyperlink.target
         municipality = row[1].value
