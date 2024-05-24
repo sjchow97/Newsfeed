@@ -7,7 +7,6 @@ var Login = require("./Pages/Login/Login");
 // var AuthProvider = require("./Context/AuthContext").AuthProvider;
 // var FeedPostLayout = require("../Context/Feed/FeedPostLayout");
 var FeedPage = require("./Pages/Feed/FeedPage");
-var PrivateRoute = require("./Pages/PrivateRoute");
 
 var App = React.createClass({
   render: function () {
