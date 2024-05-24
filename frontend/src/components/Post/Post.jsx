@@ -7,7 +7,8 @@ function Post({ article, reactionData }) {
   const dislikes = reactionData?.dislikes ?? 0;
 
   const [like_count, setLikes] = useState(likes);
-  const [dislikes_count, setDislikes] = useState(dislikes);
+  const [dislike_count, setDislikes] = useState(dislikes);
+  const [userVote, setUserVote] = useState(user_vote);
   const [showCommentInput, setShowCommentInput] = useState({});
 
   const handleLike = (id) => {
@@ -19,15 +20,14 @@ function Post({ article, reactionData }) {
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(response.error);
         }
-        // If you need to do something with the response, you can do it here
         return response.json();
       })
       .then((data) => {
-        // Update the state with the new like count
         setLikes(data.likes);
         setDislikes(data.dislikes);
+        setUserVote(data.user_vote);
       })
       .catch((error) => {
         console.error('Error:', error);
@@ -35,15 +35,49 @@ function Post({ article, reactionData }) {
   };
 
   const handleDislike = (id) => {
-    setDislikes((prevDislikes) => ({
-      ...prevDislikes,
-      [id]: !prevDislikes[id] ? 1 : 0,
-    }));
+    fetch(`http://127.0.0.1:8000/api/rss/dislike_post/${id}/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.error);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setUserVote(data.user_vote);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
 
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [id]: prevLikes[id] ? 0 : prevLikes[id],
-    }));
+  const handleUndo = (id) => {
+    fetch(`http://127.0.0.1:8000/api/rss/undo_reaction/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.error);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setUserVote(data.user_vote);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   const toggleCommentInput = (id) => {
@@ -62,13 +96,24 @@ function Post({ article, reactionData }) {
         <p>Link to article</p>
       </a>
       <div className="post-buttons">
-        <button onClick={() => handleLike(uuid)}>
-          {like_count[article.id] ? "Unlike" : "Like"} {like_count}
-        </button>
-        <button onClick={() => handleDislike(uuid)}>
-          {dislikes_count[article.id] ? "Undislike" : "Dislike"}{" "}
-          {dislikes_count}
-        </button>
+        {userVote === 1 ? (
+          <button onClick={() => handleUndo(uuid)}>
+            Un-like {like_count}
+          </button>
+        ) : (
+          <button onClick={() => handleLike(uuid)}>
+            Like {like_count}
+          </button>
+        )}
+        {userVote === -1 ? (
+          <button onClick={() => handleUndo(uuid)}>
+            Un-dislike {dislike_count}
+          </button>
+        ) : (
+          <button onClick={() => handleDislike(uuid)}>
+            Dislike {dislike_count}
+          </button>
+        )}
         <button onClick={() => toggleCommentInput(article.id)}>Comment</button>
         <button onClick={() => alert("Share functionality to be implemented")}>
           Share
