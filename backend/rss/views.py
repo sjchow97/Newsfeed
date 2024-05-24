@@ -60,13 +60,13 @@ def read_feeds(request):
             reference = PostReference.objects.get(reference_id=reference_id)
             # Check comments
             comments = get_comments(reference)
-            if comments.exists():
+            if len(comments) > 0:
                 post_comment_serializer = PostCommentSerializer(comments, many=True)
                 comment_dict[str(reference_id)] = post_comment_serializer.data
 
             # Check reactions
             reactions = get_reactions(reference)
-            if reactions.exists():
+            if len(reactions) > 0:
                 reaction_counts = get_reaction_counts(reference_id)
                 user_vote = user_reaction(reference_id, request.user)
                 reaction_dict[str(reference_id)] = {
@@ -83,6 +83,61 @@ def read_feeds(request):
         "total_pages": paginator.page.paginator.num_pages
     }
     return Response(context)
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def get_single_post(request, reference):
+    feeds = get_feeds(request.user.userprofile.location)
+    comments = []
+    reactions = {}
+
+    for entry in feeds.entries:
+        post_info = "{} {} {}".format(entry.summary_detail.base.encode('utf-8'), entry.title.encode('utf-8'), entry.published.encode('utf-8'))
+        reference_id = uuid.uuid5(REFERENCE_NAMESPACE, post_info)
+        print(reference_id)
+        print(reference)
+
+        if str(reference_id) == reference:
+            if entry.get('link'):
+                response = requests.get(entry['link'])
+
+                if response.status_code == 200:
+                    html_content = response.content
+                    soup = BeautifulSoup(html_content, 'html.parser')
+
+                    image = soup.find('meta', property='og:image')
+
+                    entry['image'] = image['content'] if image else ''
+            
+            # Check if the post references exist in the database (which means comments and/or reactions exist for the post)
+            if PostReference.objects.filter(reference_id=reference_id).exists():
+                reference = PostReference.objects.get(reference_id=reference_id)
+                # Check comments
+                comment_results = get_comments(reference)
+                if len(comment_results) > 0:
+                    post_comment_serializer = PostCommentSerializer(comment_results, many=True)
+                    comments = post_comment_serializer.data
+
+                reactions_results = get_reactions(reference)
+                if len(reactions_results) > 0:
+                    reaction_counts = get_reaction_counts(reference_id)
+                    user_vote = user_reaction(reference_id, request.user)
+                    reactions = {
+                        'likes': reaction_counts['likes'],
+                        'dislikes': reaction_counts['dislikes'],
+                        'user_vote': user_vote
+                    }
+            json_feeds = feed_to_json([entry])
+            context = {
+                "feed_posts": json_feeds,
+                "post_comments": comments,
+                "post_reactions": reactions
+            }
+            return Response(context)
+        else :
+            continue
+    return Response({'error': 'Post not found'}, status=404)
+
 
 # Gets all the comments for a specific post
 # GET /rss/get_comments_for_post/<reference_id>/
@@ -147,6 +202,7 @@ def create_post_comment(request):
 # params: request object with body containing JSON object with the reply comment data
 # returns: response object with body containing JSON object with the new reply comment data
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
 def reply_to_comment(request, comment_id):
     if request.method == 'POST':
         try:
