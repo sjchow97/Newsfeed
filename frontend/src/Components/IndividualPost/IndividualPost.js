@@ -17,7 +17,7 @@ var IndividualPost = React.createClass({
       likes: 0,
       dislikes: 0,
       loading: true,
-      userVote: null, // Add userVote to state
+      userVote: 0,
     };
   },
 
@@ -46,7 +46,7 @@ var IndividualPost = React.createClass({
             likes: data.post_reactions.likes,
             dislikes: data.post_reactions.dislikes,
             comments: data.post_comments,
-            userVote: data.user_vote, // Set userVote from data
+            userVote: data.post_reactions.user_vote, // Set userVote from data
             loading: false,
           });
         }.bind(this)
