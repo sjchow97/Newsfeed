@@ -6,6 +6,7 @@ var browserHistory = require("react-router").browserHistory;
 var App = require("./App");
 var Login = require("./Pages/Login/Login");
 var FeedPage = require("./Pages/Feed/FeedPage");
+var PostPage = require("./Pages/Post/PostPage");
 require("./index.css");
 
 // Define your routes
@@ -13,6 +14,7 @@ var routes = (
   <Router history={browserHistory}>
     <Route path="/" component={Login} />
     <Route path="/feed" component={FeedPage} />
+    <Route path="/feed/:id" component={PostPage} />
   </Router>
 );
 
