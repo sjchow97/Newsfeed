@@ -1,4 +1,5 @@
 var React = require("react");
+var browserHistory = require("react-router").browserHistory;
 require("./Post.css");
 
 var Post = React.createClass({
@@ -58,6 +59,10 @@ var Post = React.createClass({
     }));
   },
 
+  handleClick: function () {
+    browserHistory.push(`/feed/${this.props.article.uuid}`);
+  },
+
   render: function () {
     var article = this.props.article;
     var published_parsed = article.published_parsed;
@@ -73,7 +78,7 @@ var Post = React.createClass({
     var showCommentInput = this.state.showCommentInput;
 
     return (
-      <div className="post">
+      <div className="post" onClick={this.handleClick}>
         <h1>{title}</h1>
         <p>{new Date(published_parsed).toLocaleDateString()}</p>
         <p>{summary}</p>
