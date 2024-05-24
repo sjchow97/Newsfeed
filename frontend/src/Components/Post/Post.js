@@ -1,5 +1,6 @@
 var React = require("react");
 var browserHistory = require("react-router").browserHistory;
+var Link = require("react-router").Link;
 require("./Post.css");
 
 var Post = React.createClass({
@@ -127,7 +128,9 @@ var Post = React.createClass({
 
     return (
       <div className="post">
-        <h1>{title}</h1>
+        <Link to={`/feed/${uuid}`}>
+          <h1>{title}</h1>
+        </Link>
         <p>{new Date(published_parsed).toLocaleDateString()}</p>
         <p>{summary}</p>
         <a href={link}>
