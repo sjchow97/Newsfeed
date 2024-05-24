@@ -10,7 +10,7 @@ Web Scraper - written with Python 2.7.18
 Web Application:
 
 - Backend - Django 1.8.17 (on top of Python 2.7.18)
-- Frontend - React v18.3.1
+- Frontend - React v0.14
 - Database - SQLite
 
 # Login Accounts
@@ -67,7 +67,7 @@ To start the backend, change directory to `backend`, then run `python manage.py 
 ### Frontend React App
 
 To start the frontend UI, change directory to `frontend`, then run `npm start`.
-The frontend can be viewed at http://localhost:3000.
+The frontend can be viewed at http://localhost:9000.
 
 # Web Scraper
 

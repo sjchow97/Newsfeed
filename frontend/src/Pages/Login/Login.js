@@ -1,5 +1,4 @@
 var React = require("react");
-var Link = require("react-router").Link;
 var browserHistory = require("react-router").browserHistory;
 var getCSRFToken = require("../../services/utils").getCSRFToken;
 var axios = require("axios");
@@ -78,7 +77,6 @@ var Login = React.createClass({
             Login
           </button>
           {this.state.message && <p>{this.state.message}</p>}
-          <Link to="/feed">Go to feed</Link>
         </form>
       </div>
     );
