@@ -110,6 +110,7 @@ var Post = React.createClass({
     var published_parsed = article.published_parsed;
     var title = article.title;
     var summary = article.summary;
+    var imageUrl = article.image;
     var base = article.base;
     var link = article.link;
     var published = article.published;
@@ -122,33 +123,40 @@ var Post = React.createClass({
 
     return (
       <div className="post">
-        <Link to={`/feed/${uuid}`}>
-          <h1>{title}</h1>
-        </Link>
-        <p>{new Date(published_parsed).toLocaleDateString()}</p>
-        <p>{summary}</p>
-        <a href={link}>
-          <p>Link to article</p>
-        </a>
-        <PostButtons
-          userVote={userVote}
-          like_count={like_count}
-          dislikes_count={dislikes_count}
-          uuid={uuid}
-          article={article}
-          onButtonClick={this.handleButtonClick}
-          toggleCommentInput={this.toggleCommentInput}
-        />
-        {showCommentInput[article.id] && (
-          <div>
-            <input
-              className="comment-in"
-              type="text"
-              placeholder="Write a comment..."
-            />
-            <button className="submit">Post</button>
-          </div>
-        )}
+        <div>
+          <Link to={`/feed/${uuid}`} className="no-underline">
+            <h1>{title}</h1>
+          </Link>
+          <p>{new Date(published_parsed).toLocaleDateString()}</p>
+          <p>{summary}</p>
+        </div>
+        <div className="image-container">
+          <img src={imageUrl} alt={title} className="post-image"/>
+        </div>
+        <div className="actions-menu">
+          <a href={link} className="no-underline">
+            <p>Link to article</p>
+          </a>
+          <PostButtons
+            userVote={userVote}
+            like_count={like_count}
+            dislikes_count={dislikes_count}
+            uuid={uuid}
+            article={article}
+            onButtonClick={this.handleButtonClick}
+            toggleCommentInput={this.toggleCommentInput}
+          />
+          {showCommentInput[article.id] && (
+            <div>
+              <input
+                className="comment-in"
+                type="text"
+                placeholder="Write a comment..."
+              />
+              <button className="submit">Post</button>
+            </div>
+          )}
+        </div>
       </div>
     );
   },
