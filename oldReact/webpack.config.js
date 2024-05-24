@@ -21,13 +21,13 @@ module.exports = {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.(png|jpg|gif|svg)$/,
+        test: /\.(png|jpe?g|gif)$/i,
         use: [
           {
-            loader: "url-loader",
+            loader: "file-loader",
             options: {
-              limit: 8192, // Convert images < 8kb to base64 strings
-              name: "Images/[name].[ext]", // Output images to images folder
+              name: "[name].[hash].[ext]",
+              outputPath: "images/",
             },
           },
         ],

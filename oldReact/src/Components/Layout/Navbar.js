@@ -7,7 +7,7 @@ var Navbar = React.createClass({
     return React.createElement(
       "div",
       { className: "navbar" },
-      <img src={logo} alt="logo" className="logo" />,
+      <img src={logo.default} alt="logo" className="logo" />,
       React.createElement(
         "div",
         { className: "nav-buttons" },
