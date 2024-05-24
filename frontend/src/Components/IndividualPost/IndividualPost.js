@@ -1,4 +1,5 @@
 var React = require("react");
+var Comment = require("../Comment/Comment");
 require("./IndividualPost.css");
 
 var IndividualPost = React.createClass({
@@ -57,25 +58,36 @@ var IndividualPost = React.createClass({
             <p>Loading...</p>
           </div>
         ) : (
-          <div>
-            <h1>{this.state.post.title}</h1>
-            <p>{this.state.post.content}</p>
-            <div className="reactions">
-              <button className="like">Like</button>
-              <p>{this.state.likes}</p>
-              <button className="dislike">Dislike</button>
-              <p>{this.state.dislikes}</p>
+          <div className="post-container">
+            <div className="post-info">
+              <h1>{this.state.post.title}</h1>
+              <h3>
+                {new Date(
+                  this.state.post.published_parsed
+                ).toLocaleDateString()}
+              </h3>
+              <h3>{this.state.post.summary}</h3>
+              <a href={this.state.post.link}>
+                <p>Link to article</p>
+              </a>
+              <div className="reactions">
+                <button className="like">Like</button>
+                <p>{this.state.likes}</p>
+                <button className="dislike">Dislike</button>
+                <p>{this.state.dislikes}</p>
+              </div>
             </div>
-            <h2>Comments</h2>
-            <ul>
-              {this.state.comments.map(function (comment) {
-                return (
-                  <li key={comment.id}>
-                    <p>{comment.content}</p>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="comments">
+              <ul>
+                {this.state.comments.map(function (comment) {
+                  return (
+                    <li key={comment.id}>
+                      <p>{comment.content}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         )}
       </div>
