@@ -130,6 +130,13 @@ var IndividualPost = React.createClass({
                 ).toLocaleDateString()}
               </h3>
               <h3>{this.state.post.summary}</h3>
+              <div className="image-container">
+                <img
+                  src={this.state.post.image}
+                  alt={this.state.post.title}
+                  className="post-image"
+                />
+              </div>
               <a href={this.state.post.link}>
                 <p>Link to article</p>
               </a>
