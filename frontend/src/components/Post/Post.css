@@ -1,0 +1,38 @@
+.post-buttons {
+    display: flex; 
+    justify-content: start;
+    margin-top: 5px;
+    padding: 0; 
+}
+
+.container {
+    display: flex;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.like-svg,
+.dislike-svg {
+    margin: 0;
+    height: 30px;
+    width: 30px;
+    transition: all 0.3s;
+    fill: #666;
+}
+
+.like-svg:hover,
+.dislike-svg:hover {
+    transform: scale(1.1) rotate(-10deg);
+}
+
+.container input {
+    display: none;
+}
+
+.container input:checked + .like-svg {
+    fill: rgb(84, 142, 248);
+}
+
+.container input:checked + .dislike-svg {
+    fill: rgb(185, 51, 51);
+}
