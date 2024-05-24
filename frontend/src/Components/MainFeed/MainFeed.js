@@ -34,7 +34,6 @@ var MainFeed = React.createClass({
       })
       .then(
         function (data) {
-          console.log(data);
           this.setState({
             articles: data.feed_posts,
             totalPages: data.total_pages,

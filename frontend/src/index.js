@@ -14,7 +14,7 @@ var routes = (
   <Router history={browserHistory}>
     <Route path="/" component={Login} />
     <Route path="/feed" component={FeedPage} />
-    <Route path="/feed/:id" component={PostPage} />
+    <Route path="/feed/:uuid" component={PostPage} />
   </Router>
 );
 

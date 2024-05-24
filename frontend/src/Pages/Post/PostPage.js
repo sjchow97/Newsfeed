@@ -6,12 +6,13 @@ require("./PostPage.css");
 
 var PostPage = React.createClass({
   render: function () {
+    const { uuid } = this.props.params;
     return (
       <div className="post-page">
         <Navbar />
         <div className="content">
           <Sidebar />
-          <IndividualPost />
+          <IndividualPost uuid={uuid} />
         </div>
       </div>
     );
