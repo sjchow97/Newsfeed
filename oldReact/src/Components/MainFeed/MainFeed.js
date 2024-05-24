@@ -7,6 +7,7 @@ var MainFeed = React.createClass({
   getInitialState: function () {
     return {
       articles: [],
+      reactions: {},
       currentPage: 1,
       totalPages: 1,
       loading: true, // Initialize the loading state
@@ -33,11 +34,13 @@ var MainFeed = React.createClass({
       })
       .then(
         function (data) {
+          console.log(data);
           this.setState({
             articles: data.feed_posts,
             totalPages: data.total_pages,
             currentPage: data.current_page,
-            loading: false, // Set loading state to false after fetching
+            loading: false,
+            reactions: data.post_reactions,
           });
         }.bind(this)
       )
@@ -62,14 +65,24 @@ var MainFeed = React.createClass({
           </div>
         ) : (
           <div className="posts">
-            {this.state.articles.map(function (article, index) {
-              return <Post key={index} article={article} />;
+            {this.state.articles.map((article, index) => {
+              return (
+                <Post
+                  key={index}
+                  article={article}
+                  reactionData={
+                    article.uuid in this.state.reactions
+                      ? this.state.reactions[article.uuid]
+                      : null
+                  }
+                />
+              );
             })}
             <div className="pagination-main">
               <Pagination
                 currentPage={this.state.currentPage}
                 totalPages={this.state.totalPages}
-                onPageChange={this.handlePageChange}
+                onPageChange={(pageNumber) => this.handlePageChange(pageNumber)}
               />
             </div>
           </div>

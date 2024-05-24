@@ -1,44 +1,61 @@
 var React = require("react");
-var useState = require("react").useState;
-var uuidv5 = require("uuid").v5;
-
-var REFERENCE_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8";
+require("./Post.css");
 
 var Post = React.createClass({
   getInitialState: function () {
+    var likes = 0;
+    var dislikes = 0;
+
+    if (this.props.reactionData) {
+      likes = this.props.reactionData.likes || 0;
+      dislikes = this.props.reactionData.dislikes || 0;
+    }
+
     return {
-      likes: {},
-      dislikes: {},
+      like_count: likes,
+      dislikes_count: dislikes,
       showCommentInput: {},
     };
   },
 
   handleLike: function (id) {
-    this.setState(function (prevState) {
-      var likes = Object.assign({}, prevState.likes);
-      var dislikes = Object.assign({}, prevState.dislikes);
-      likes[id] = !likes[id] ? 1 : 0;
-      dislikes[id] = dislikes[id] ? 0 : dislikes[id];
-      return { likes: likes, dislikes: dislikes };
-    });
+    fetch(`http://127.0.0.1:8000/api/rss/like_post/${id}/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({
+          like_count: data.likes,
+          dislikes_count: data.dislikes,
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   },
 
   handleDislike: function (id) {
-    this.setState(function (prevState) {
-      var likes = Object.assign({}, prevState.likes);
-      var dislikes = Object.assign({}, prevState.dislikes);
-      dislikes[id] = !dislikes[id] ? 1 : 0;
-      likes[id] = likes[id] ? 0 : likes[id];
-      return { likes: likes, dislikes: dislikes };
-    });
+    this.setState((prevState) => ({
+      dislikes_count: !prevState.dislikes_count[id] ? 1 : 0,
+      like_count: prevState.like_count[id] ? 0 : prevState.like_count[id],
+    }));
   },
 
   toggleCommentInput: function (id) {
-    this.setState(function (prevState) {
-      var showCommentInput = Object.assign({}, prevState.showCommentInput);
-      showCommentInput[id] = !showCommentInput[id];
-      return { showCommentInput: showCommentInput };
-    });
+    this.setState((prevState) => ({
+      showCommentInput: {
+        ...prevState.showCommentInput,
+        [id]: !prevState.showCommentInput[id],
+      },
+    }));
   },
 
   render: function () {
@@ -46,11 +63,13 @@ var Post = React.createClass({
     var published_parsed = article.published_parsed;
     var title = article.title;
     var summary = article.summary;
+    var base = article.base;
     var link = article.link;
-    var id = article.id;
+    var published = article.published;
+    var uuid = article.uuid;
 
-    var likes = this.state.likes;
-    var dislikes = this.state.dislikes;
+    var like_count = this.state.like_count;
+    var dislikes_count = this.state.dislikes_count;
     var showCommentInput = this.state.showCommentInput;
 
     return (
@@ -62,13 +81,14 @@ var Post = React.createClass({
           <p>Link to article</p>
         </a>
         <div className="post-buttons">
-          <button onClick={this.handleLike.bind(this, id)}>
-            {likes[id] ? "Unlike" : "Like"} {likes[id] || 0}
+          <button onClick={() => this.handleLike(uuid)}>
+            {like_count[article.id] ? "Unlike" : "Like"} {like_count}
           </button>
-          <button onClick={this.handleDislike.bind(this, id)}>
-            {dislikes[id] ? "Undislike" : "Dislike"} {dislikes[id] || 0}
+          <button onClick={() => this.handleDislike(uuid)}>
+            {dislikes_count[article.id] ? "Undislike" : "Dislike"}{" "}
+            {dislikes_count}
           </button>
-          <button onClick={this.toggleCommentInput.bind(this, id)}>
+          <button onClick={() => this.toggleCommentInput(article.id)}>
             Comment
           </button>
           <button
@@ -77,7 +97,7 @@ var Post = React.createClass({
             Share
           </button>
         </div>
-        {showCommentInput[id] && (
+        {showCommentInput[article.id] && (
           <div>
             <input
               className="comment-in"
