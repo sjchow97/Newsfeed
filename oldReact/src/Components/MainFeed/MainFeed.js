@@ -13,8 +13,12 @@ var MainFeed = React.createClass({
   },
 
   componentDidMount: function () {
+    this.fetchArticles(this.state.currentPage);
+  },
+
+  fetchArticles: function (pageNumber) {
     var token = localStorage.getItem("token");
-    fetch("http://127.0.0.1:8000/api/rss/read_feeds/", {
+    fetch("http://127.0.0.1:8000/api/rss/read_feeds/?page=" + pageNumber, {
       headers: {
         Authorization: "Token " + token,
       },
@@ -27,10 +31,11 @@ var MainFeed = React.createClass({
       })
       .then(
         function (data) {
-          this.setState({ articles: data.feed_posts });
-          this.setState({ totalPages: data.total_pages });
-          this.setState({ currentPage: data.current_page });
-          console.log(data);
+          this.setState({
+            articles: data.feed_posts,
+            totalPages: data.total_pages,
+            currentPage: data.current_page,
+          });
         }.bind(this)
       )
       .catch(function (error) {
@@ -39,7 +44,7 @@ var MainFeed = React.createClass({
   },
 
   handlePageChange: function (pageNumber) {
-    this.setState({ currentPage: pageNumber });
+    this.fetchArticles(pageNumber);
   },
 
   render: function () {
@@ -54,7 +59,7 @@ var MainFeed = React.createClass({
             })}
             <div className="pagination-main">
               <Pagination
-                totalItems={this.state.articles.length}
+                currentPage={this.state.currentPage}
                 totalPages={this.state.totalPages}
                 onPageChange={this.handlePageChange}
               />
