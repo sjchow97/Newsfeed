@@ -1,6 +1,13 @@
 var React = require("react");
 var browserHistory = require("react-router").browserHistory;
 var Link = require("react-router").Link;
+
+var {
+  handleLike,
+  handleDislike,
+  handleUndo,
+} = require("../../utils/postActions");
+
 require("./Post.css");
 
 var Post = React.createClass({
@@ -24,18 +31,8 @@ var Post = React.createClass({
   },
 
   handleLike: function (id) {
-    fetch(`http://127.0.0.1:8000/api/rss/like_post/${id}/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
+    const token = localStorage.getItem("token");
+    handleLike(id, token)
       .then((data) => {
         this.setState({
           like_count: data.likes,
@@ -49,18 +46,8 @@ var Post = React.createClass({
   },
 
   handleDislike: function (id) {
-    fetch(`http://127.0.0.1:8000/api/rss/dislike_post/${id}/`, {
-      method: "POST",
-      headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
+    const token = localStorage.getItem("token");
+    handleDislike(id, token)
       .then((data) => {
         this.setState({
           like_count: data.likes,
@@ -74,18 +61,8 @@ var Post = React.createClass({
   },
 
   handleUndo: function (id) {
-    fetch(`http://127.0.0.1:8000/api/rss/undo_reaction/${id}/`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Token ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
+    const token = localStorage.getItem("token");
+    handleUndo(id, token)
       .then((data) => {
         this.setState({
           like_count: data.likes,

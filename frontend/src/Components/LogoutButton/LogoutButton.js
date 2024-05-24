@@ -1,6 +1,6 @@
 var React = require("react");
 var useAuth = require("../../Context/AuthContext").useAuth;
-var api = require("../../services/api");
+var api = require("../../utils/api");
 require("./LogoutButton.css");
 
 var LogoutButton = React.createClass({
