@@ -7,6 +7,7 @@ var App = require("./App");
 var Login = require("./Pages/Login/Login");
 var FeedPage = require("./Pages/Feed/FeedPage");
 var PostPage = require("./Pages/Post/PostPage");
+var NotFound = require("./Pages/NotFound/NotFound");
 require("./index.css");
 
 // Define your routes
@@ -15,6 +16,7 @@ var routes = (
     <Route path="/" component={Login} />
     <Route path="/feed" component={FeedPage} />
     <Route path="/feed/:uuid" component={PostPage} />
+    <Route path="*" component={NotFound} />
   </Router>
 );
 
