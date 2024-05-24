@@ -9,6 +9,7 @@ var MainFeed = React.createClass({
       articles: [],
       currentPage: 1,
       totalPages: 1,
+      loading: true, // Initialize the loading state
     };
   },
 
@@ -17,6 +18,7 @@ var MainFeed = React.createClass({
   },
 
   fetchArticles: function (pageNumber) {
+    this.setState({ loading: true }); // Set loading state to true before fetching
     var token = localStorage.getItem("token");
     fetch("http://127.0.0.1:8000/api/rss/read_feeds/?page=" + pageNumber, {
       headers: {
@@ -35,12 +37,16 @@ var MainFeed = React.createClass({
             articles: data.feed_posts,
             totalPages: data.total_pages,
             currentPage: data.current_page,
+            loading: false, // Set loading state to false after fetching
           });
         }.bind(this)
       )
-      .catch(function (error) {
-        console.error("Error fetching data:", error);
-      });
+      .catch(
+        function (error) {
+          console.error("Error fetching data:", error);
+          this.setState({ loading: false }); // Set loading state to false on error
+        }.bind(this)
+      );
   },
 
   handlePageChange: function (pageNumber) {
@@ -50,8 +56,10 @@ var MainFeed = React.createClass({
   render: function () {
     return (
       <div className="main-feed">
-        {this.state.articles.length === 0 ? (
-          <p>Loading...</p>
+        {this.state.loading ? (
+          <div className="loading">
+            <p>Loading...</p>
+          </div>
         ) : (
           <div className="posts">
             {this.state.articles.map(function (article, index) {
