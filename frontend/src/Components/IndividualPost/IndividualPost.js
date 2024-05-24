@@ -19,7 +19,7 @@ var IndividualPost = React.createClass({
   fetchPost: function () {
     this.setState({ loading: true });
     var token = localStorage.getItem("token");
-    fetch(`http://127.0.0.1:8000/api/rss/${this.props.uuid}`, {
+    fetch("http://127.0.0.1:8000/api/rss/" + this.props.uuid, {
       headers: {
         Authorization: "Token " + token,
       },

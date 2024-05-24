@@ -6,16 +6,19 @@ var Post = React.createClass({
   getInitialState: function () {
     var likes = 0;
     var dislikes = 0;
+    var userVote = null;
 
     if (this.props.reactionData) {
       likes = this.props.reactionData.likes || 0;
       dislikes = this.props.reactionData.dislikes || 0;
+      userVote = this.props.reactionData.user_vote || null;
     }
 
     return {
       like_count: likes,
       dislikes_count: dislikes,
       showCommentInput: {},
+      userVote: userVote,
     };
   },
 
@@ -36,6 +39,7 @@ var Post = React.createClass({
         this.setState({
           like_count: data.likes,
           dislikes_count: data.dislikes,
+          userVote: data.user_vote,
         });
       })
       .catch((error) => {
@@ -44,10 +48,53 @@ var Post = React.createClass({
   },
 
   handleDislike: function (id) {
-    this.setState((prevState) => ({
-      dislikes_count: !prevState.dislikes_count[id] ? 1 : 0,
-      like_count: prevState.like_count[id] ? 0 : prevState.like_count[id],
-    }));
+    fetch(`http://127.0.0.1:8000/api/rss/dislike_post/${id}/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({
+          like_count: data.likes,
+          dislikes_count: data.dislikes,
+          userVote: data.user_vote,
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  },
+
+  handleUndo: function (id) {
+    fetch(`http://127.0.0.1:8000/api/rss/undo_reaction/${id}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Token ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        this.setState({
+          like_count: data.likes,
+          dislikes_count: data.dislikes,
+          userVote: data.user_vote,
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   },
 
   toggleCommentInput: function (id) {
@@ -75,10 +122,11 @@ var Post = React.createClass({
 
     var like_count = this.state.like_count;
     var dislikes_count = this.state.dislikes_count;
+    var userVote = this.state.userVote;
     var showCommentInput = this.state.showCommentInput;
 
     return (
-      <div className="post" onClick={this.handleClick}>
+      <div className="post">
         <h1>{title}</h1>
         <p>{new Date(published_parsed).toLocaleDateString()}</p>
         <p>{summary}</p>
@@ -86,13 +134,24 @@ var Post = React.createClass({
           <p>Link to article</p>
         </a>
         <div className="post-buttons">
-          <button onClick={() => this.handleLike(uuid)}>
-            {like_count[article.id] ? "Unlike" : "Like"} {like_count}
-          </button>
-          <button onClick={() => this.handleDislike(uuid)}>
-            {dislikes_count[article.id] ? "Undislike" : "Dislike"}{" "}
-            {dislikes_count}
-          </button>
+          {userVote === 1 ? (
+            <button onClick={() => this.handleUndo(uuid)}>
+              Un-like {like_count}
+            </button>
+          ) : (
+            <button onClick={() => this.handleLike(uuid)}>
+              Like {like_count}
+            </button>
+          )}
+          {userVote === -1 ? (
+            <button onClick={() => this.handleUndo(uuid)}>
+              Un-dislike {dislikes_count}
+            </button>
+          ) : (
+            <button onClick={() => this.handleDislike(uuid)}>
+              Dislike {dislikes_count}
+            </button>
+          )}
           <button onClick={() => this.toggleCommentInput(article.id)}>
             Comment
           </button>
