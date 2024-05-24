@@ -12,7 +12,7 @@ require("./index.css");
 var routes = (
   <Router history={browserHistory}>
     <Route path="/" component={Login} />
-    <Route path="feed" component={FeedPage} />
+    <Route path="/feed" component={FeedPage} />
   </Router>
 );
 
