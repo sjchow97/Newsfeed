@@ -1,13 +1,8 @@
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
 .pagination ul {
   list-style: none;
   padding: 0;
   display: flex;
+  justify-content: center;
 }
 
 .pagination li {
@@ -15,22 +10,16 @@
 }
 
 .pagination a {
-  display: block;
-  padding: 10px 15px;
   text-decoration: none;
-  color: #000;
+  color: black;
+  padding: 8px 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
-}
-
-.pagination li.active a {
-  background-color: blue;
-  color: white;
-  border-color: blue;
-}
-
-.pagination li.ellipsis {
   display: block;
-  padding: 10px 15px;
-  color: #999;
+}
+
+.pagination a:hover {
+  color: white;
+  cursor: pointer;
+  background-color:rgb(40, 144, 255);
 }
