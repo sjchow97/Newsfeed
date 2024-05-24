@@ -1,38 +1,83 @@
 import React, { useState } from "react";
-import { v5 as uuidv5 } from 'uuid';
 
-const REFERENCE_NAMESPACE = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+function Post({ article, reactionData }) {
+  const { published_parsed, title, summary, base, link, published, uuid } = article;
+  const user_vote = reactionData?.user_vote ?? 0;
+  const likes = reactionData?.likes ?? 0;
+  const dislikes = reactionData?.dislikes ?? 0;
 
-function Post({ article }) {
-  const { published_parsed, title, summary, base, link, published } = article;
-  const uuid = uuidv5(`${title}`, REFERENCE_NAMESPACE);
-
-  const [likes, setLikes] = useState({});
-  const [dislikes, setDislikes] = useState({});
+  const [like_count, setLikes] = useState(likes);
+  const [dislike_count, setDislikes] = useState(dislikes);
+  const [userVote, setUserVote] = useState(user_vote);
   const [showCommentInput, setShowCommentInput] = useState({});
 
   const handleLike = (id) => {
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [id]: !prevLikes[id] ? 1 : 0,
-    }));
-
-    setDislikes((prevDislikes) => ({
-      ...prevDislikes,
-      [id]: prevDislikes[id] ? 0 : prevDislikes[id],
-    }));
+    fetch(`http://127.0.0.1:8000/api/rss/like_post/${id}/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.error);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setUserVote(data.user_vote);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   const handleDislike = (id) => {
-    setDislikes((prevDislikes) => ({
-      ...prevDislikes,
-      [id]: !prevDislikes[id] ? 1 : 0,
-    }));
+    fetch(`http://127.0.0.1:8000/api/rss/dislike_post/${id}/`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.error);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setUserVote(data.user_vote);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  };
 
-    setLikes((prevLikes) => ({
-      ...prevLikes,
-      [id]: prevLikes[id] ? 0 : prevLikes[id],
-    }));
+  const handleUndo = (id) => {
+    fetch(`http://127.0.0.1:8000/api/rss/undo_reaction/${id}/`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(response.error);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setUserVote(data.user_vote);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
   };
 
   const toggleCommentInput = (id) => {
@@ -51,13 +96,24 @@ function Post({ article }) {
         <p>Link to article</p>
       </a>
       <div className="post-buttons">
-        <button onClick={() => handleLike(article.id)}>
-          {likes[article.id] ? "Unlike" : "Like"} {likes[article.id] || 0}
-        </button>
-        <button onClick={() => handleDislike(article.id)}>
-          {dislikes[article.id] ? "Undislike" : "Dislike"}{" "}
-          {dislikes[article.id] || 0}
-        </button>
+        {userVote === 1 ? (
+          <button onClick={() => handleUndo(uuid)}>
+            Un-like {like_count}
+          </button>
+        ) : (
+          <button onClick={() => handleLike(uuid)}>
+            Like {like_count}
+          </button>
+        )}
+        {userVote === -1 ? (
+          <button onClick={() => handleUndo(uuid)}>
+            Un-dislike {dislike_count}
+          </button>
+        ) : (
+          <button onClick={() => handleDislike(uuid)}>
+            Dislike {dislike_count}
+          </button>
+        )}
         <button onClick={() => toggleCommentInput(article.id)}>Comment</button>
         <button onClick={() => alert("Share functionality to be implemented")}>
           Share

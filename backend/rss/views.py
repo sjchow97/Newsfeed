@@ -7,6 +7,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 
 from .feed_reader import get_feeds, feed_to_json
@@ -16,7 +17,6 @@ from .models import PostReference, PostComment, PostReaction
 from .serializers import PostReferenceSerializer, PostCommentSerializer, PostReactionSerializer
 from bs4 import BeautifulSoup
 
-import re
 import uuid
 import requests
 
@@ -32,15 +32,20 @@ def read_feeds(request):
     feeds = get_feeds(request.user.userprofile.location)
     comment_dict = {}
     reaction_dict = {}
-    for entry in feeds.entries:
-        reference_id = uuid.uuid5(REFERENCE_NAMESPACE, entry.title.encode('utf-8'))
+
+    # Paginate entries
+    paginator = PageNumberPagination()
+    paginator.page_size = 10
+    page_number = request.query_params.get('page', 1)  # Get the page number from the query parameters
+    entries = paginator.paginate_queryset(feeds.entries, request, view=None)
+
+    for entry in entries:
+        post_info = "{} {} {}".format(entry.summary_detail.base.encode('utf-8'), entry.title.encode('utf-8'), entry.published.encode('utf-8'))
+        reference_id = uuid.uuid5(REFERENCE_NAMESPACE, post_info)
         entry['uuid'] = reference_id
-        # get meta info
-        url_pattern = re.compile(r'https?://\S+')
-        url_match = url_pattern.search(entry.link)
-        if url_match:
-            url = url_match.group()
-            response = requests.get(url)
+
+        if entry.get('link'):
+            response = requests.get(entry['link'])
 
             if response.status_code == 200:
                 html_content = response.content
@@ -49,9 +54,8 @@ def read_feeds(request):
                 image = soup.find('meta', property='og:image')
 
                 entry['image'] = image['content'] if image else ''
-        else:
-            url = None
-
+        
+        # Check if the post references exist in the database (which means comments and/or reactions exist for the post)
         if PostReference.objects.filter(reference_id=reference_id).exists():
             reference = PostReference.objects.get(reference_id=reference_id)
             # Check comments
@@ -70,11 +74,13 @@ def read_feeds(request):
                     'dislikes': reaction_counts['dislikes'],
                     'user_vote': user_vote
                 }
-    json_feeds = feed_to_json(feeds)
+    json_feeds = feed_to_json(entries)
     context = {
-        "feed_posts": json_feeds["entries"],
+        "feed_posts": json_feeds,
         "post_comments": comment_dict,
         "post_reactions": reaction_dict,
+        "current_page": paginator.page.number,
+        "total_pages": paginator.page.paginator.num_pages
     }
     return Response(context)
 
@@ -118,7 +124,8 @@ def create_post_comment(request):
         # Request body should contain post_reference data of the post they are commenting on
         post_reference_data = request.data.pop('post_reference', None)
         if post_reference_data is not None:
-            post_reference, created = PostReference.objects.get_or_create(reference_id=post_reference_data['reference_id'], defaults=post_reference_data)
+            post_reference, created = PostReference.objects.get_or_create(
+                reference_id=post_reference_data['reference_id'], defaults=post_reference_data)
             data = request.data.copy()
             data.update({'reference': post_reference.reference_id})
             data.update({'parent': None})
@@ -144,6 +151,8 @@ def reply_to_comment(request, comment_id):
     if request.method == 'POST':
         try:
             parent_comment = PostComment.objects.get(comment_id=comment_id)
+            if parent_comment.parent is not None:
+                return Response({'error': 'Cannot reply to a reply'}, status=400)
         except PostComment.DoesNotExist:
             return Response({'error': 'Parent comment not found'}, status=404)
 
@@ -198,11 +207,23 @@ def delete_post_comment(request, comment_id):
     if request.method == 'DELETE':
         try:
             post_comment = PostComment.objects.get(comment_id=comment_id)
+            reference = post_comment.reference
         except PostComment.DoesNotExist:
             return Response({'error': 'PostComment not found'}, status=404)
 
         if request.user.is_authenticated and post_comment.user == request.user:
-            post_comment.delete()
+            if post_comment.replies.exists():
+                post_comment.content = 'POST DELETED'
+                if post_comment.post_title:
+                    post_comment.post_title = None
+                post_comment.save()
+            else:
+                post_comment.delete()
+            
+            # If no other comment or reaction exists for the post, delete the post reference as well
+            if not (PostComment.objects.filter(reference=reference).exists() or 
+                    PostReaction.objects.filter(reference=reference).exists()):
+                reference.delete()
             return Response({'message': 'Comment deleted successfully'})
         else:
             return Response({'error': 'User does not have permission to delete this comment'}, status=403)
@@ -221,8 +242,8 @@ def like_post(request, reference_id):
             return Response({'error': 'reference_id is missing'}, status=400)
         post_reference, created = PostReference.objects.get_or_create(reference_id=reference_id)
         user = request.user
-        reaction = add_reaction(post_reference, user, 1)
-        return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
+        reaction_info = add_reaction(post_reference, user, 1)
+        return Response(reaction_info, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
 
@@ -238,15 +259,15 @@ def dislike_post(request, reference_id):
             return Response({'error': 'reference_id is missing'}, status=400)
         post_reference, created = PostReference.objects.get_or_create(reference_id=reference_id)
         user = request.user
-        reaction = add_reaction(post_reference, user, -1)
-        return Response(PostReactionSerializer(reaction).data, status=status.HTTP_200_OK)
+        reaction_info = add_reaction(post_reference, user, -1)
+        return Response(reaction_info, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
 
 # Removes a reaction from a post
 # DELETE /rss/undo_reaction/<reference_id>/
 # params: request object and reference_id
-# returns: response object with body containing JSON object with message indicating success or failure
+# returns: response object with body containing JSON object with the new post reaction data
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 def undo_reaction(request, reference_id):
@@ -258,52 +279,13 @@ def undo_reaction(request, reference_id):
         except PostReference.DoesNotExist:
             return Response({'error': 'PostReference not found'}, status=404)
         user = request.user
-        remove_reaction(post_reference, user)
+        reaction_info = remove_reaction(post_reference, user)
 
         # If no other comment or reaction exists for the post, delete the post reference as well
         if not (PostComment.objects.filter(reference=post_reference).exists() or 
                 PostReaction.objects.filter(reference=post_reference).exists()):
             post_reference.delete()
-        return Response({'message': 'Reaction removed successfully'})
+        
+        return Response(reaction_info, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
-
-
-# Function from fcv-redesign meant to obtain image url 
-# @login_required_ajax
-def FetchMeta(request):
-            if request.method == 'GET':
-                input_string = request.GET.get('input_string')  # String containing URL(s)
-
-                # Regular expression pattern to detect URLs
-                url_pattern = re.compile(r'https?://\S+')
-                urls = url_pattern.findall(input_string)
-
-                meta_info_list = []
-                
-                for url in urls:
-                    try:
-                        response = requests.get(url)
-                        if response.status_code == 200:
-                            html_content = response.content
-                            soup = BeautifulSoup(html_content, 'html.parser')
-
-                            # Extract meta information
-                            title = soup.find('meta', property='og:title')
-                            description = soup.find('meta', property='og:description')
-                            image = soup.find('meta', property='og:image')
-
-                            meta_info = {
-                                'url': url,
-                                'title': title['content'] if title else '',
-                                'description': description['content'] if description else '',
-                                'image': image['content'] if image else ''
-                            }
-                            meta_info_list.append(meta_info)
-                            return JsonResponse({'meta_info': meta_info_list})
-                    except Exception as e:
-                        # Handle exceptions accordingly
-                        print("Error fetching metadata for")
-
-            return JsonResponse({'error': 'Invalid request'})
-            

@@ -5,6 +5,9 @@ import "./FeedPage.css";
 
 function FeedPage() {
   const [articles, setArticles] = useState([]);
+  const [reactions, setReactions] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const token = localStorage.getItem("token");
   useEffect(() => {
@@ -21,16 +24,22 @@ function FeedPage() {
       })
       .then((data) => {
         setArticles(data.feed_posts);
+        setReactions(data.post_reactions);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  console.log(articles);
-
   return (
     <div className="posts">
       {articles.length > 0 ? (
-        articles.map((item, index) => <Post key={index} article={item} />)
+        articles.map((item, index) => (
+          <React.Fragment key={index}>
+            <Post 
+              article={item} 
+              reactionData={item.uuid in reactions ? reactions[item.uuid] : null}
+            />
+          </React.Fragment>
+        ))
       ) : (
         <p>Loading...</p>
       )}
