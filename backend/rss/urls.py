@@ -5,6 +5,7 @@ from . import views
 app_name = "rss"
 urlpatterns = [
     url(r'^post_comment/$', views.create_post_comment, name="post_comment"),
+    url(r'^reply/(?P<comment_id>\d+)/$', views.reply_to_comment, name="reply_to_comment"),
     url(r'^edit_comment/(?P<comment_id>\d+)/$', views.edit_post_comment, name="edit_comment"),
     url(r'^delete_comment/(?P<comment_id>\d+)/$', views.delete_post_comment, name="delete_comment"),
     url(r'^list_comments/$', views.list_comments, name="list_comments"),
@@ -13,4 +14,5 @@ urlpatterns = [
     url(r'^like_post/(?P<reference_id>.+)/$', views.like_post, name='like_post'),
     url(r'^dislike_post/(?P<reference_id>.+)/$', views.dislike_post, name='dislike_post'),
     url(r'^undo_reaction/(?P<reference_id>.+)/$', views.undo_reaction, name='undo_reaction'),
+    url(r'^(?P<reference>.+)/$', views.get_single_post, name='get_post'),
 ]

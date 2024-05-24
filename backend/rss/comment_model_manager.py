@@ -1,9 +1,14 @@
 from .models import PostComment, PostReference
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils import timezone
+from operator import attrgetter
 
 def get_comments(reference_id):
-    return PostComment.objects.filter(reference=reference_id)
+    # return PostComment.objects.filter(reference=reference_id)
+    comments = list(PostComment.objects.filter(reference=reference_id).order_by('-creation_date'))
+    comments.sort(key=attrgetter('parent_id', 'creation_date'))
+    print(comments)
+    return comments
 
 def add_comment(reference_id, user, post_title, content):
     reference, created = PostReference.objects.get_or_create(id=reference_id)
