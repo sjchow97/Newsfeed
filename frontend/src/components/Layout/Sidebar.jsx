@@ -2,9 +2,9 @@ import React from "react";
 import LogoutButton from "../LogoutButton";
 import "./Sidebar.css";
 
-function Sidebar() {
+function Sidebar({ isVisible }) {
   return (
-    <div className="sidebar">
+    <div className={`sidebar ${isVisible ? 'visible' : ''}`}>
       <a href="#">Dashboard</a>
       <a href="#">Topics</a>
       <a href="#">Neighbourhood</a>

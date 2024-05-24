@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Post from "../Post/Post";
+import Sidebar from "../Layout/Sidebar";
 import "./FeedPage.css";
 
 function FeedPage() {
@@ -8,8 +9,11 @@ function FeedPage() {
   const [reactions, setReactions] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const token = localStorage.getItem("token");
+
   useEffect(() => {
     fetch("http://127.0.0.1:8000/api/rss/read_feeds/", {
       headers: {
@@ -29,20 +33,44 @@ function FeedPage() {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarVisible(!isSidebarVisible);
+  };
+
   return (
-    <div className="posts">
-      {articles.length > 0 ? (
-        articles.map((item, index) => (
-          <React.Fragment key={index}>
-            <Post 
-              article={item} 
-              reactionData={item.uuid in reactions ? reactions[item.uuid] : null}
-            />
-          </React.Fragment>
-        ))
+    <div className="container">
+      {isMobile ? (
+        <>
+          <button className="sidebar-toggle" onClick={toggleSidebar}>
+            ☰
+          </button>
+          <Sidebar isVisible={isSidebarVisible} />
+        </>
       ) : (
-        <p>Loading...</p>
+        <Sidebar isVisible />
       )}
+      <div className="posts">
+        {articles.length > 0 ? (
+          articles.map((item, index) => (
+            <React.Fragment key={index}>
+              <Post
+                article={item}
+                reactionData={item.uuid in reactions ? reactions[item.uuid] : null}
+              />
+            </React.Fragment>
+          ))
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -7,6 +7,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 40px;
   height: 350px;
+  transition: transform 0.3s ease;
 }
 
 .sidebar a {
@@ -27,7 +28,7 @@
 }
 
 .logout-link {
-  background-color: #D7F0FF; /* Match the sidebar background color */
+  background-color: #D7F0FF;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   border-radius: 40px;
   padding: 10px;
@@ -42,4 +43,34 @@
 .logout-link:hover {
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute;
+    z-index: 10;
+    height: 100%;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.visible {
+    transform: translateX(0);
+  }
+
+  .posts {
+    margin-left: 0;
+  }
+
+  .sidebar-toggle {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 20;
+    background-color: #D7F0FF;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+  }
 }
