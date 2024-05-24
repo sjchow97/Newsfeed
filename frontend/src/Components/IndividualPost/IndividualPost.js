@@ -1,6 +1,13 @@
 var React = require("react");
 var Comment = require("../Comment/Comment");
+var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
+
+var {
+  handleLike,
+  handleDislike,
+  handleUndo,
+} = require("../../utils/postActions");
 
 var IndividualPost = React.createClass({
   getInitialState: function () {
@@ -10,6 +17,7 @@ var IndividualPost = React.createClass({
       likes: 0,
       dislikes: 0,
       loading: true,
+      userVote: null, // Add userVote to state
     };
   },
 
@@ -38,6 +46,7 @@ var IndividualPost = React.createClass({
             likes: data.post_reactions.likes,
             dislikes: data.post_reactions.dislikes,
             comments: data.post_comments,
+            userVote: data.user_vote, // Set userVote from data
             loading: false,
           });
         }.bind(this)
@@ -48,6 +57,60 @@ var IndividualPost = React.createClass({
           this.setState({ loading: false });
         }.bind(this)
       );
+  },
+
+  handleLike: function (id) {
+    const token = localStorage.getItem("token");
+    handleLike(id, token)
+      .then((data) => {
+        this.setState({
+          likes: data.likes,
+          dislikes: data.dislikes,
+          userVote: data.user_vote,
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  },
+
+  handleDislike: function (id) {
+    const token = localStorage.getItem("token");
+    handleDislike(id, token)
+      .then((data) => {
+        this.setState({
+          likes: data.likes,
+          dislikes: data.dislikes,
+          userVote: data.user_vote,
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  },
+
+  handleUndo: function (id) {
+    const token = localStorage.getItem("token");
+    handleUndo(id, token)
+      .then((data) => {
+        this.setState({
+          likes: data.likes,
+          dislikes: data.dislikes,
+          userVote: data.user_vote,
+        });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  },
+
+  toggleCommentInput: function (id) {
+    this.setState((prevState) => ({
+      showCommentInput: {
+        ...prevState.showCommentInput,
+        [id]: !prevState.showCommentInput[id],
+      },
+    }));
   },
 
   render: function () {
@@ -70,12 +133,19 @@ var IndividualPost = React.createClass({
               <a href={this.state.post.link}>
                 <p>Link to article</p>
               </a>
-              <div className="reactions">
-                <button className="like">Like</button>
-                <p>{this.state.likes}</p>
-                <button className="dislike">Dislike</button>
-                <p>{this.state.dislikes}</p>
-              </div>
+              <PostButtons
+                userVote={this.state.userVote}
+                like_count={this.state.likes}
+                dislikes_count={this.state.dislikes}
+                uuid={this.props.uuid}
+                article={this.state.post}
+                onButtonClick={(action, id) => {
+                  if (action === "like") this.handleLike(id);
+                  if (action === "dislike") this.handleDislike(id);
+                  if (action === "undo") this.handleUndo(id);
+                }}
+                toggleCommentInput={this.toggleCommentInput}
+              />
             </div>
             <div className="comments">
               <ul>
@@ -94,4 +164,5 @@ var IndividualPost = React.createClass({
     );
   },
 });
+
 module.exports = IndividualPost;

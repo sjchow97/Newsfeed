@@ -1,6 +1,7 @@
 var React = require("react");
 var browserHistory = require("react-router").browserHistory;
 var Link = require("react-router").Link;
+var PostButtons = require("../PostButtons/PostButtons");
 
 var {
   handleLike,
@@ -75,6 +76,22 @@ var Post = React.createClass({
       });
   },
 
+  handleButtonClick: function (action, id) {
+    switch (action) {
+      case "like":
+        this.handleLike(id);
+        break;
+      case "dislike":
+        this.handleDislike(id);
+        break;
+      case "undo":
+        this.handleUndo(id);
+        break;
+      default:
+        break;
+    }
+  },
+
   toggleCommentInput: function (id) {
     this.setState((prevState) => ({
       showCommentInput: {
@@ -113,34 +130,15 @@ var Post = React.createClass({
         <a href={link}>
           <p>Link to article</p>
         </a>
-        <div className="post-buttons">
-          {userVote === 1 ? (
-            <button onClick={() => this.handleUndo(uuid)}>
-              Un-like {like_count}
-            </button>
-          ) : (
-            <button onClick={() => this.handleLike(uuid)}>
-              Like {like_count}
-            </button>
-          )}
-          {userVote === -1 ? (
-            <button onClick={() => this.handleUndo(uuid)}>
-              Un-dislike {dislikes_count}
-            </button>
-          ) : (
-            <button onClick={() => this.handleDislike(uuid)}>
-              Dislike {dislikes_count}
-            </button>
-          )}
-          <button onClick={() => this.toggleCommentInput(article.id)}>
-            Comment
-          </button>
-          <button
-            onClick={() => alert("Share functionality to be implemented")}
-          >
-            Share
-          </button>
-        </div>
+        <PostButtons
+          userVote={userVote}
+          like_count={like_count}
+          dislikes_count={dislikes_count}
+          uuid={uuid}
+          article={article}
+          onButtonClick={this.handleButtonClick}
+          toggleCommentInput={this.toggleCommentInput}
+        />
         {showCommentInput[article.id] && (
           <div>
             <input
