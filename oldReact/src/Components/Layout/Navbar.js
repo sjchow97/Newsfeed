@@ -1,6 +1,7 @@
 var React = require("react");
 require("./Navbar.css");
 var logo = require("../../Images/logo.png");
+var profile = require("../../Images/profile.png");
 
 var Navbar = React.createClass({
   render: function () {
@@ -18,16 +19,10 @@ var Navbar = React.createClass({
       React.createElement(
         "div",
         { className: "profile-notifications" },
-        React.createElement(
-          "button",
-          { className: "notifications-button" },
-          "Notifications"
-        ),
-        React.createElement(
-          "div",
-          { className: "profile" },
-          React.createElement("img", { src: logo, alt: "profile" })
-        )
+        <button className="notifications-button">Notifications</button>,
+        <div className="profile">
+          <img src={profile.default} alt="profile" />
+        </div>
       )
     );
   },
