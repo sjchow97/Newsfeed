@@ -114,6 +114,7 @@ var IndividualPost = React.createClass({
   },
 
   render: function () {
+    console.log(this.state.comments);
     return (
       <div className="individual-post">
         {this.state.loading ? (
@@ -157,11 +158,7 @@ var IndividualPost = React.createClass({
             <div className="comments">
               <ul>
                 {this.state.comments.map(function (comment) {
-                  return (
-                    <li key={comment.id}>
-                      <p>{comment.content}</p>
-                    </li>
-                  );
+                  return <Comment key={comment.comment_id} comment={comment} />;
                 })}
               </ul>
             </div>
