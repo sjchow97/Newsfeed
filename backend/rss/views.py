@@ -58,11 +58,10 @@ def read_feeds(request):
         # Check if the post references exist in the database (which means comments and/or reactions exist for the post)
         if PostReference.objects.filter(reference_id=reference_id).exists():
             reference = PostReference.objects.get(reference_id=reference_id)
-            # Check comments
+            # Check comment count
             comments = get_comments(reference)
             if len(comments) > 0:
-                post_comment_serializer = PostCommentSerializer(comments, many=True)
-                comment_dict[str(reference_id)] = post_comment_serializer.data
+                comment_dict[str(reference_id)] = len(comments)
 
             # Check reactions
             reactions = get_reactions(reference)

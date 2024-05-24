@@ -134,7 +134,7 @@ var Post = React.createClass({
           <img src={imageUrl} alt={title} className="post-image"/>
         </div>
         <div className="actions-menu">
-          <a href={link} className="no-underline">
+          <a href={link} target="_blank" className="no-underline">
             <p>Link to article</p>
           </a>
           <PostButtons
