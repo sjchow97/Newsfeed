@@ -267,7 +267,7 @@ def dislike_post(request, reference_id):
 # Removes a reaction from a post
 # DELETE /rss/undo_reaction/<reference_id>/
 # params: request object and reference_id
-# returns: response object with body containing JSON object with message indicating success or failure
+# returns: response object with body containing JSON object with the new post reaction data
 @api_view(['DELETE'])
 @authentication_classes([TokenAuthentication])
 def undo_reaction(request, reference_id):
@@ -279,12 +279,13 @@ def undo_reaction(request, reference_id):
         except PostReference.DoesNotExist:
             return Response({'error': 'PostReference not found'}, status=404)
         user = request.user
-        remove_reaction(post_reference, user)
+        reaction_info = remove_reaction(post_reference, user)
 
         # If no other comment or reaction exists for the post, delete the post reference as well
         if not (PostComment.objects.filter(reference=post_reference).exists() or 
                 PostReaction.objects.filter(reference=post_reference).exists()):
             post_reference.delete()
-        return Response({'message': 'Reaction removed successfully'})
+        
+        return Response(reaction_info, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid request method'}, status=405)
