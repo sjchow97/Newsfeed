@@ -85,6 +85,20 @@ function Post({ article, reactionData }) {
     setShowCommentInput(!showCommentInput);
   };
 
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: title,
+        text: summary,
+        url: link,
+      })
+      .then(() => console.log('Successfully shared'))
+      .catch((error) => console.error('Error sharing:', error));
+    } else {
+      alert('Web Share API is not supported in your browser.');
+    }
+  };
+
   return (
     <div className="post">
       <h1>{title}</h1>
@@ -117,7 +131,7 @@ function Post({ article, reactionData }) {
           </svg>
         </label>
         <button onClick={toggleCommentInput}>Comment</button>
-        <button onClick={() => alert("Share functionality to be implemented")}>
+        <button onClick={handleShare}>
           Share
         </button>
       </div>
