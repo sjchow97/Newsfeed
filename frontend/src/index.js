@@ -4,6 +4,7 @@ var Router = require("react-router").Router;
 var Route = require("react-router").Route;
 var browserHistory = require("react-router").browserHistory;
 var requireAuth = require("./utils/requireAuth");
+var redirectIfAuth = require("./utils/redirectIfAuth");
 var App = require("./App");
 var Login = require("./Pages/Login/Login");
 var FeedPage = require("./Pages/Feed/FeedPage");
@@ -14,7 +15,7 @@ require("./index.css");
 // Define your routes
 var routes = (
   <Router history={browserHistory}>
-    <Route path="/" component={Login} />
+    <Route path="/" component={redirectIfAuth(Login)} />
     <Route path="/feed" component={requireAuth(FeedPage)} />
     <Route path="/feed/:uuid" component={requireAuth(PostPage)} />
     <Route path="*" component={NotFound} />
