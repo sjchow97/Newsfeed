@@ -37,8 +37,12 @@ var Comment = React.createClass({
       : null;
 
     // Determine whether to show the edit link based on user identity
-    var loggedInUserId = localStorage.getItem("userId"); // Assuming userId is stored in localStorage
-    var showEditLink = loggedInUserId === comment.user_id;
+    var user = localStorage.getItem("user");
+    var userObj = user ? JSON.parse(user) : {};
+    const userId = userObj.id;
+    var showEditLink = userId === comment.user_id;
+
+    console.log(showEditLink);
 
     return (
       <div className="comment">
