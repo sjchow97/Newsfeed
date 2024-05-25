@@ -1,13 +1,13 @@
-.feed-page {
+.feed-post {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100vh; 
     width: 100%;
   }
   
   .content {
     display: flex;
     flex-grow: 1;
-    width: 100%; 
+    width: 100%;
   }
   

@@ -2,26 +2,26 @@ import React, { useState } from "react";
 import "./Post.css";
 
 function Post({ article, reactionData }) {
-  const { published_parsed, title, summary, base, link, published, uuid } = article;
+  const { published_parsed, title, summary, link, uuid } = article;
   const user_vote = reactionData?.user_vote ?? 0;
   const likes = reactionData?.likes ?? 0;
   const dislikes = reactionData?.dislikes ?? 0;
 
-  const [like_count, setLikes] = useState(likes);
-  const [dislike_count, setDislikes] = useState(dislikes);
+  const [likeCount, setLikes] = useState(likes);
+  const [dislikeCount, setDislikes] = useState(dislikes);
   const [userVote, setUserVote] = useState(user_vote);
-  const [showCommentInput, setShowCommentInput] = useState({});
+  const [showCommentInput, setShowCommentInput] = useState(false);
 
   const handleLike = (id) => {
     fetch(`http://127.0.0.1:8000/api/rss/like_post/${id}/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
+        Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error(response.error);
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
@@ -31,20 +31,20 @@ function Post({ article, reactionData }) {
         setUserVote(data.user_vote);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
   };
 
   const handleDislike = (id) => {
     fetch(`http://127.0.0.1:8000/api/rss/dislike_post/${id}/`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
+        Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error(response.error);
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
@@ -54,20 +54,20 @@ function Post({ article, reactionData }) {
         setUserVote(data.user_vote);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
   };
 
   const handleUndo = (id) => {
     fetch(`http://127.0.0.1:8000/api/rss/undo_reaction/${id}/`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Authorization': `Token ${localStorage.getItem('token')}`,
+        Authorization: `Token ${localStorage.getItem("token")}`,
       },
     })
       .then((response) => {
         if (!response.ok) {
-          throw new Error(response.error);
+          throw new Error("Network response was not ok");
         }
         return response.json();
       })
@@ -77,15 +77,12 @@ function Post({ article, reactionData }) {
         setUserVote(data.user_vote);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
       });
   };
 
-  const toggleCommentInput = (id) => {
-    setShowCommentInput((prevShowCommentInput) => ({
-      ...prevShowCommentInput,
-      [id]: !prevShowCommentInput[id],
-    }));
+  const toggleCommentInput = () => {
+    setShowCommentInput(!showCommentInput);
   };
 
   return (
@@ -100,7 +97,7 @@ function Post({ article, reactionData }) {
         <label className="container">
           <input
             type="checkbox"
-            onClick={() => userVote === 1 ? handleUndo(uuid) : handleLike(uuid)}
+            onClick={() => (userVote === 1 ? handleUndo(uuid) : handleLike(uuid))}
             checked={userVote === 1}
           />
           <svg className="like-svg" version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -111,7 +108,7 @@ function Post({ article, reactionData }) {
         <label className="container">
           <input
             type="checkbox"
-            onClick={() => userVote === -1 ? handleUndo(uuid) : handleDislike(uuid)}
+            onClick={() => (userVote === -1 ? handleUndo(uuid) : handleDislike(uuid))}
             checked={userVote === -1}
           />
           <svg className="dislike-svg" version="1.1" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -119,12 +116,12 @@ function Post({ article, reactionData }) {
             <path d="M25.001,20h4C29.554,20,30,19.552,30,19V5c0-0.552-0.446-1-0.999-1h-4c-0.553,0-1,0.448-1,1v14  C24.001,19.552,24.448,20,25.001,20z M27.001,6.5c0.828,0,1.5,0.672,1.5,1.5c0,0.828-0.672,1.5-1.5,1.5c-0.828,0-1.5-0.672-1.5-1.5  C25.501,7.172,26.173,6.5,27.001,6.5z" />
           </svg>
         </label>
-        <button onClick={() => toggleCommentInput(article.id)}>Comment</button>
+        <button onClick={toggleCommentInput}>Comment</button>
         <button onClick={() => alert("Share functionality to be implemented")}>
           Share
         </button>
       </div>
-      {showCommentInput[article.id] && (
+      {showCommentInput && (
         <div>
           <input
             className="comment-in"

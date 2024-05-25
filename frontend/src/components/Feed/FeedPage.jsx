@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Post from "../Post/Post";
 import Sidebar from "../Layout/Sidebar";
 import "./FeedPage.css";
@@ -7,8 +6,6 @@ import "./FeedPage.css";
 function FeedPage() {
   const [articles, setArticles] = useState([]);
   const [reactions, setReactions] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -31,7 +28,7 @@ function FeedPage() {
         setReactions(data.post_reactions);
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const handleResize = () => {

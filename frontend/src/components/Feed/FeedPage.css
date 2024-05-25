@@ -1,12 +1,14 @@
 .container {
   display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+  flex-grow: 1;
 }
 
 .sidebar {
   width: 300px;
   background-color: #D7F0FF;
   margin-top: 40px;
-  margin-left: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 40px;
@@ -23,8 +25,13 @@
 }
 
 @media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .sidebar {
-    position: absolute;
+    position: fixed;
     z-index: 10;
     height: 100%;
     transform: translateX(-100%);
@@ -35,7 +42,9 @@
   }
 
   .posts {
-    margin-left: 0;
+    margin: 0;
+    padding: 20px;
+    width: 100%;
   }
 
   .sidebar-toggle {
@@ -54,16 +63,26 @@
 
 .posts {
   flex-grow: 1;
-  padding: 20px;
-  background-color: #ffffff;
+  padding: 30px;
   margin: 40px;
-  border-radius: 40px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-width: 800px;
+  max-width: calc(100% - 360px); /* Adjusting for sidebar width and margin */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .posts {
+    margin: 0;
+    max-width: 100%;
+  }
 }
 
 .post {
-  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 40px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .post h1 {
@@ -107,7 +126,7 @@
   background-color: #f0f0f0;
   border-radius: 40px;
   border: none;
-  width: 700px;
+  width: 100%; /* Adjust to 100% to fill the container */
 }
 
 .submit {

@@ -9,7 +9,7 @@ const FeedPageLayout = () => {
     <div className="feed-page">
       <Navbar />
       <div className="content">
-        <Sidebar />
+        {/* <Sidebar /> */}
         <FeedPage />
       </div>
     </div>
