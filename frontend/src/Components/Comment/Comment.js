@@ -6,6 +6,8 @@ var Comment = React.createClass({
     return {
       isEditing: false,
       editedContent: this.props.comment.content,
+      isReplying: false,
+      replyContent: "",
     };
   },
 
@@ -13,20 +15,38 @@ var Comment = React.createClass({
     this.setState({ isEditing: true });
   },
 
-  handleCancel: function () {
+  handleCancelEdit: function () {
     this.setState({ isEditing: false });
   },
 
-  handleChange: function (e) {
+  handleChangeEdit: function (e) {
     this.setState({ editedContent: e.target.value });
   },
 
   handleSave: function () {
-    // Send the edited content to the server and update the comment
-    // Here, you would typically make an API call to update the comment content
-    // For the sake of simplicity, I'll just update the UI state
     this.setState({ isEditing: false });
     this.props.onEdit(this.props.comment.comment_id, this.state.editedContent);
+  },
+
+  handleReply: function () {
+    this.setState({ isReplying: true });
+  },
+
+  handleCancelReply: function () {
+    this.setState({ isReplying: false, replyContent: "" });
+  },
+
+  handleChangeReply: function (e) {
+    this.setState({ replyContent: e.target.value });
+  },
+
+  handleSaveReply: function () {
+    this.props.onReply(this.props.comment.comment_id, this.state.replyContent);
+    this.setState({ isReplying: false, replyContent: "" });
+  },
+
+  handleDelete: function () {
+    this.props.onDelete(this.props.comment.comment_id);
   },
 
   render: function () {
@@ -36,13 +56,10 @@ var Comment = React.createClass({
       ? new Date(comment.edited_date).toLocaleString()
       : null;
 
-    // Determine whether to show the edit link based on user identity
     var user = localStorage.getItem("user");
     var userObj = user ? JSON.parse(user) : {};
-    const userId = userObj.id;
-    var showEditLink = userId === comment.user_id;
-
-    console.log(showEditLink);
+    var userId = userObj.id;
+    var showEditLink = userId === comment.user;
 
     return (
       <div className="comment">
@@ -52,10 +69,10 @@ var Comment = React.createClass({
           <div>
             <textarea
               value={this.state.editedContent}
-              onChange={this.handleChange}
+              onChange={this.handleChangeEdit}
             />
             <button onClick={this.handleSave}>Save</button>
-            <button onClick={this.handleCancel}>Cancel</button>
+            <button onClick={this.handleCancelEdit}>Cancel</button>
           </div>
         ) : (
           <div>
@@ -63,7 +80,29 @@ var Comment = React.createClass({
               {comment.content}
               {editedDate && <span className="edited"> (Edited)</span>}
             </p>
-            {showEditLink && <button onClick={this.handleEdit}>Edit</button>}
+            {showEditLink && (
+              <div>
+                <a href="#" onClick={this.handleEdit} className="edit-link">
+                  Edit
+                </a>
+                <a href="#" onClick={this.handleDelete} className="delete-link">
+                  Delete
+                </a>
+              </div>
+            )}
+            <a href="#" onClick={this.handleReply} className="reply-link">
+              Reply
+            </a>
+          </div>
+        )}
+        {this.state.isReplying && (
+          <div className="reply-section">
+            <textarea
+              value={this.state.replyContent}
+              onChange={this.handleChangeReply}
+            />
+            <button onClick={this.handleSaveReply}>Reply</button>
+            <button onClick={this.handleCancelReply}>Cancel</button>
           </div>
         )}
       </div>

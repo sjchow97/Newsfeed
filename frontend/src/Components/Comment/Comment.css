@@ -18,4 +18,16 @@
     font-style: italic;
     color: #888;
   }
+
+  .edit-link, .delete-link, .reply-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .reply-section {
+    margin-top: 10px;
+  }
+  
   

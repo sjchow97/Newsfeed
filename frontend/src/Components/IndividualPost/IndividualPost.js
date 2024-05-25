@@ -115,7 +115,6 @@ var IndividualPost = React.createClass({
   },
 
   render: function () {
-    console.log(this.state.comments);
     return (
       <div className="individual-post">
         {this.state.loading ? (
