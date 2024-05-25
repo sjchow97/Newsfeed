@@ -41,6 +41,7 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
+          console.log(data);
           this.setState({
             post: data.feed_posts[0],
             likes: data.post_reactions.likes,

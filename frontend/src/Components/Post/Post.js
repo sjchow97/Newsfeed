@@ -115,6 +115,7 @@ var Post = React.createClass({
     var link = article.link;
     var published = article.published;
     var uuid = article.uuid;
+    var commentCount = article.comment_count;
 
     var like_count = this.state.like_count;
     var dislikes_count = this.state.dislikes_count;
@@ -131,7 +132,7 @@ var Post = React.createClass({
           <p>{summary}</p>
         </div>
         <div className="image-container">
-          <img src={imageUrl} alt={title} className="post-image"/>
+          <img src={imageUrl} alt={title} className="post-image" />
         </div>
         <div className="actions-menu">
           <a href={link} target="_blank" className="no-underline">
@@ -141,6 +142,7 @@ var Post = React.createClass({
             userVote={userVote}
             like_count={like_count}
             dislikes_count={dislikes_count}
+            comment_count={commentCount}
             uuid={uuid}
             article={article}
             onButtonClick={this.handleButtonClick}

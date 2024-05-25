@@ -11,6 +11,7 @@ var PostButtons = React.createClass({
       userVote,
       like_count,
       dislikes_count,
+      comment_count,
       uuid,
       article,
       toggleCommentInput,
@@ -36,7 +37,9 @@ var PostButtons = React.createClass({
             Dislike {dislikes_count}
           </button>
         )}
-        <button onClick={() => toggleCommentInput(article.id)}>Comment</button>
+        <button onClick={() => toggleCommentInput(article.id)}>
+          Comments: {comment_count}
+        </button>
         <button onClick={() => alert("Share functionality to be implemented")}>
           Share
         </button>
