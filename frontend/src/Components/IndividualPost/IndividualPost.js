@@ -145,6 +145,7 @@ var IndividualPost = React.createClass({
                 userVote={this.state.userVote}
                 like_count={this.state.likes}
                 dislikes_count={this.state.dislikes}
+                comment_count={this.state.post.comment_count}
                 uuid={this.props.uuid}
                 article={this.state.post}
                 onButtonClick={(action, id) => {
