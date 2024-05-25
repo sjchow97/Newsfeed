@@ -25,30 +25,36 @@ var Login = React.createClass({
     event.preventDefault();
     var self = this;
 
-    axios
-      .post(
-        "http://127.0.0.1:8000/auth/login/",
-        {
-          username: this.state.username,
-          password: this.state.password,
-        },
-        { withCredentials: true }
-      )
-      .then(function (response) {
-        self.setState({ message: response.data.message });
-        localStorage.setItem("user", JSON.stringify(response.data.user));
-        localStorage.setItem("token", response.data.token);
-        browserHistory.push("/feed");
-      })
-      .catch(function (error) {
-        if (error.response) {
-          self.setState({ message: error.response.data.error });
-        } else {
-          // The request was made but no response was received or a network error occurred
-          // You can capture the error message in the state, or handle it in another way
-          self.setState({ message: error.message });
-        }
-      });
+    fetch("http://127.0.0.1:8000/auth/login/", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: this.state.username,
+        password: this.state.password,
+      }),
+      credentials: 'include'
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error logging in');
+      }
+      return response.json();
+    })
+    .then(data => {
+      this.setState({ message: data.message });
+      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", data.token);
+      browserHistory.push("/feed");
+    })
+    .catch(error => {
+      if (error.response) {
+        this.setState({ message: error.response.data.error });
+      } else {
+        this.setState({ message: error.message });
+      }
+    });
   },
 
   render: function () {
