@@ -93,8 +93,6 @@ def get_single_post(request, reference):
     for entry in feeds.entries:
         post_info = "{} {} {}".format(entry.summary_detail.base.encode('utf-8'), entry.title.encode('utf-8'), entry.published.encode('utf-8'))
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, post_info)
-        print(reference_id)
-        print(reference)
 
         if str(reference_id) == reference:
             if entry.get('link'):

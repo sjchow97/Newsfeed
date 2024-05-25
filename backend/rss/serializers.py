@@ -16,10 +16,14 @@ class PostCommentSerializer(serializers.ModelSerializer):
     reference = serializers.PrimaryKeyRelatedField(queryset=PostReference.objects.all())
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     parent = serializers.PrimaryKeyRelatedField(queryset=PostComment.objects.all(), allow_null=True)
+    user_name = serializers.SerializerMethodField()
 
     class Meta:
-        fields = ('comment_id', 'post_title', 'content', 'creation_date', 'edited_date', 'reference', 'user', 'parent')
+        fields = ('comment_id', 'post_title', 'content', 'creation_date', 'edited_date', 'reference', 'user', 'parent', 'user_name')
         model = PostComment
+    
+    def get_user_name(self, obj):
+        return obj.user.get_full_name()
 
 class PostReactionSerializer(serializers.ModelSerializer):
     reference = serializers.PrimaryKeyRelatedField(queryset=PostReference.objects.all())

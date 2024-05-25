@@ -4,8 +4,9 @@ from django.utils import timezone
 from operator import attrgetter
 
 def get_comments(reference_id):
-    # return PostComment.objects.filter(reference=reference_id)
+    # Sort comments by descending creation date
     comments = list(PostComment.objects.filter(reference=reference_id).order_by('-creation_date'))
+    # If there are replies, group them by parent_id and ascending creation_date
     comments.sort(key=attrgetter('parent_id', 'creation_date'))
     print(comments)
     return comments
