@@ -37,7 +37,6 @@
   transform: scale(1.07);
 }
 
-/* Hamburger menu styles */
 .hamburger-menu {
   display: none;
   cursor: pointer;
@@ -51,23 +50,23 @@
   transition: 0.4s;
 }
 
-/* Active state for menu items */
 .nav-buttons.active {
   display: flex;
   flex-direction: column;
   position: absolute;
   top: 75px;
   right: 20px;
-  width: 200px;
+  width: 240px;
   background-color: #59ace8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1;
   border-radius: 20px;
+  padding: 10px;
 }
 
 .nav-buttons.active button {
-  margin: 5px;
-  width: 95%;
+  margin: 1px 0;
+  width: 100%; 
   border-radius: 20px;
 }
 
@@ -75,7 +74,6 @@
   background-color: rgb(40, 144, 255);
 }
 
-/* Open state for hamburger menu */
 .bar.open:nth-child(1) {
   transform: translateY(8px) rotate(45deg);
 }
