@@ -1,3 +1,9 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -6,6 +12,7 @@
   width: 100%;
   background-color: #59ace8;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 
 .logo {
@@ -87,6 +94,11 @@
 }
 
 @media (max-width: 768px) {
+
+  .navbar {
+    width: 113%;
+  }
+
   .nav-buttons {
     display: none;
   }
