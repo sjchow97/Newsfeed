@@ -96,6 +96,8 @@ def get_single_post(request, reference):
     for entry in feeds.entries:
         post_info = "{} {} {}".format(entry.summary_detail.base.encode('utf-8'), entry.title.encode('utf-8'), entry.published.encode('utf-8'))
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, post_info)
+        entry['uuid'] = reference_id
+        entry['comment_count'] = 0
 
         if str(reference_id) == reference:
             if entry.get('link'):
@@ -115,6 +117,7 @@ def get_single_post(request, reference):
                 # Check comments
                 comment_results = get_comments(reference)
                 if len(comment_results) > 0:
+                    entry['comment_count'] = len(comment_results)
                     post_comment_serializer = PostCommentSerializer(comment_results, many=True)
                     comments = post_comment_serializer.data
 
