@@ -36,6 +36,7 @@ var Login = React.createClass({
       )
       .then(function (response) {
         self.setState({ message: response.data.message });
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         localStorage.setItem("token", response.data.token);
         browserHistory.push("/feed");
       })

@@ -43,6 +43,7 @@ def read_feeds(request):
         post_info = "{} {} {}".format(entry.summary_detail.base.encode('utf-8'), entry.title.encode('utf-8'), entry.published.encode('utf-8'))
         reference_id = uuid.uuid5(REFERENCE_NAMESPACE, post_info)
         entry['uuid'] = reference_id
+        entry['comment_count'] = 0
 
         if entry.get('link'):
             response = requests.get(entry['link'])
@@ -60,8 +61,7 @@ def read_feeds(request):
             reference = PostReference.objects.get(reference_id=reference_id)
             # Check comment count
             comments = get_comments(reference)
-            if len(comments) > 0:
-                comment_dict[str(reference_id)] = len(comments)
+            entry['comment_count'] = len(comments) if comments is not None else 0
 
             # Check reactions
             reactions = get_reactions(reference)
@@ -76,7 +76,6 @@ def read_feeds(request):
     json_feeds = feed_to_json(entries)
     context = {
         "feed_posts": json_feeds,
-        "post_comments": comment_dict,
         "post_reactions": reaction_dict,
         "current_page": paginator.page.number,
         "total_pages": paginator.page.paginator.num_pages

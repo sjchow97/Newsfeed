@@ -33,6 +33,8 @@ class Login(APIView):
             return Response({
                 'message': 'Login successful', 
                 'user': {
+                    'id': user.id,
+                    'name': user.get_full_name(),
                     'username': user.username,
                     'locale': user.userprofile.location
                 },

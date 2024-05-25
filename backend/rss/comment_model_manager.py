@@ -8,7 +8,6 @@ def get_comments(reference_id):
     comments = list(PostComment.objects.filter(reference=reference_id).order_by('-creation_date'))
     # If there are replies, group them by parent_id and ascending creation_date
     comments.sort(key=attrgetter('parent_id', 'creation_date'))
-    print(comments)
     return comments
 
 def add_comment(reference_id, user, post_title, content):

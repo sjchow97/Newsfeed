@@ -40,7 +40,7 @@ def feed_to_json(feed):
         {
             key: convert_value(key, value)
             for key, value in entry.items()
-            if key in ["title", "summary", "description", "published", "link", "published_parsed", "summary_detail", "uuid", "image"]
+            if key in ["title", "summary", "description", "published", "link", "published_parsed", "summary_detail", "uuid", "image", "comment_count"]
         }
         for entry in feed
     ]
