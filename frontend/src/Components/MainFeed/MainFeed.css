@@ -1,0 +1,55 @@
+.post {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    margin: 40px;
+    border-radius: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+  }
+  
+  .post h1 {
+    font-size: 30px;
+    margin-bottom: 20px;
+  }
+  
+  .post p {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  
+  .comment-in {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 40px;
+    border: none;
+    width: 700px;
+  }
+  
+  .submit{
+    background-color: white;
+    color: black;
+    padding: 10px;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border: none;
+  }
+  
+  .pagination-main {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }

@@ -29,7 +29,9 @@ class PostComment(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
 
     def __str__(self):
-        return (self.user.username + ": " + self.post_title)
+        username = self.user.username if self.user and self.user.username else 'No username'
+        post_title = self.post_title if self.post_title else 'No title'
+        return username + ": " + post_title
 
 class PostReaction(models.Model):
     VOTE_CHOICES = [

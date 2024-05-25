@@ -1,0 +1,33 @@
+.comment {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .comment h3 {
+    margin: 0 0 10px;
+  }
+  
+  .comment p {
+    margin: 5px 0;
+  }
+  
+  .comment .edited {
+    font-style: italic;
+    color: #888;
+  }
+
+  .edit-link, .delete-link, .reply-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .reply-section {
+    margin-top: 10px;
+  }
+  
+  
