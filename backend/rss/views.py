@@ -82,6 +82,10 @@ def read_feeds(request):
     }
     return Response(context)
 
+#Gets a single post based on the reference ID
+# GET /rss/get_single_post/<reference>/
+# params: request object, reference
+# returns: response object with body containing JSON object containing the single post, comments and reactions related to the post
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 def get_single_post(request, reference):
