@@ -125,6 +125,7 @@ function Post({ article, reactionData }) {
         <div>
           <input
             className="comment-in"
+            style={{ display: 'block' }}
             type="text"
             placeholder="Write a comment..."
           />
