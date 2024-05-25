@@ -90,8 +90,8 @@ function Post({ article, reactionData }) {
       <h1>{title}</h1>
       <p>{new Date(published_parsed).toLocaleDateString()}</p>
       <p>{summary}</p>
-      <a href={link}>
-        <p>Link to article</p>
+      <a href={link} className="link-button" target="_blank" rel="noopener noreferrer">
+        Link to article
       </a>
       <div className="post-buttons">
         <label className="container">
