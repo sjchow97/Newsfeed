@@ -3,6 +3,7 @@ var browserHistory = require("react-router").browserHistory;
 var Link = require("react-router").Link;
 var PostButtons = require("../PostButtons/PostButtons");
 
+var { createComment } = require("../../utils/commentActions");
 var {
   handleLike,
   handleDislike,
@@ -28,6 +29,7 @@ var Post = React.createClass({
       dislikes_count: dislikes,
       showCommentInput: {},
       userVote: userVote,
+      newComment: "",
     };
   },
 
@@ -101,6 +103,27 @@ var Post = React.createClass({
     }));
   },
 
+  handleCommentChange: function (e) {
+    this.setState({ newComment: e.target.value });
+  },
+
+  handleCommentSubmit: function (postId) {
+    const token = localStorage.getItem("token");
+    const comment = {
+      content: this.state.newComment,
+      post_reference: { reference_id: postId },
+    };
+
+    createComment(postId, token, comment)
+      .then((data) => {
+        this.setState({ newComment: "" });
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error creating comment:", error);
+      });
+  },
+
   handleClick: function () {
     browserHistory.push(`/feed/${this.props.article.uuid}`);
   },
@@ -121,7 +144,6 @@ var Post = React.createClass({
     var dislikes_count = this.state.dislikes_count;
     var userVote = this.state.userVote;
     var showCommentInput = this.state.showCommentInput;
-
     return (
       <div className="post">
         <div>
@@ -154,8 +176,15 @@ var Post = React.createClass({
                 className="comment-in"
                 type="text"
                 placeholder="Write a comment..."
+                value={this.state.newComment}
+                onChange={this.handleCommentChange}
               />
-              <button className="submit">Post</button>
+              <button
+                className="submit"
+                onClick={() => this.handleCommentSubmit(article.uuid)}
+              >
+                Post
+              </button>
             </div>
           )}
         </div>
