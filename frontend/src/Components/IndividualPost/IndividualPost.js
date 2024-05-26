@@ -3,6 +3,8 @@ var CommentList = require("../Comment/CommentList");
 var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
 
+var { createComment } = require("../../utils/commentActions");
+
 var {
   handleLike,
   handleDislike,
@@ -14,10 +16,12 @@ var IndividualPost = React.createClass({
     return {
       post: {},
       comments: [],
+      showCommentInput: {},
       likes: 0,
       dislikes: 0,
       loading: true,
       userVote: 0,
+      newComment: "",
     };
   },
 
@@ -174,6 +178,27 @@ var IndividualPost = React.createClass({
     }));
   },
 
+  handleCommentChange: function (e) {
+    this.setState({ newComment: e.target.value });
+  },
+
+  handleCommentSubmit: function (postId) {
+    const token = localStorage.getItem("token");
+    const comment = {
+      content: this.state.newComment,
+      post_reference: { reference_id: postId },
+    };
+
+    createComment(postId, token, comment)
+      .then((data) => {
+        this.setState({ newComment: "" });
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error creating comment:", error);
+      });
+  },
+
   render: function () {
     return (
       <div className="individual-post">
@@ -215,6 +240,23 @@ var IndividualPost = React.createClass({
                 }}
                 toggleCommentInput={this.toggleCommentInput}
               />
+              {this.state.showCommentInput && (
+                <div>
+                  <input
+                    className="comment-in"
+                    type="text"
+                    placeholder="Write a comment..."
+                    value={this.state.newComment}
+                    onChange={this.handleCommentChange}
+                  />
+                  <button
+                    className="submit"
+                    onClick={() => this.handleCommentSubmit(this.props.uuid)}
+                  >
+                    Post
+                  </button>
+                </div>
+              )}
             </div>
             <div className="comments">
               <CommentList
