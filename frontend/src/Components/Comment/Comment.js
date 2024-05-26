@@ -94,8 +94,9 @@ var Comment = React.createClass({
 
     return (
       <div className="comment">
-        <p>{comment.user_name}</p>
-        <p>{creationDate}</p>
+        <p id="user-name">{comment.user_name}</p>
+        <p id="publication-date">{creationDate}</p>
+        <br/>
         {this.state.isEditing ? (
           <div>
             <textarea
@@ -111,20 +112,25 @@ var Comment = React.createClass({
               {comment.content}
               {editedDate && <span className="edited"> (Edited)</span>}
             </p>
-            <a href="#" onClick={this.handleReply} className="reply-link">
-              Reply
-            </a>
-            {showEditLink && (
-              <div>
-                <a href="#" onClick={this.handleEdit} className="edit-link">
-                  Edit
+            <div id="comment-actions">
+              {!comment.parent && (
+                <a href="#" onClick={this.handleReply} className="reply-link">
+                  Reply
                 </a>
-                <a href="#" onClick={this.handleDelete} className="delete-link">
-                  Delete
-                </a>
-              </div>
-            )}
-           
+              )}
+              {showEditLink && (
+                <div>
+                  <a href="#" onClick={this.handleEdit} className="edit-link">
+                    Edit
+                  </a>
+                  {!comment.replies.length && (
+                    <a href="#" onClick={this.handleDelete} className="delete-link">
+                      Delete
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
         {this.state.isReplying && (

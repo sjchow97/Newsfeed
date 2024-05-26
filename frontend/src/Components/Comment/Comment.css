@@ -49,3 +49,18 @@
 .reply-section input {
     background-color: #f0f0f0;
 }
+
+#user-name {
+    font-weight: bold;
+}
+
+#publication-date {
+    font-size: 12px;
+    color: #888;
+}
+
+#comment-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
