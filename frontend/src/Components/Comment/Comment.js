@@ -130,9 +130,12 @@ var Comment = React.createClass({
         )}
         {this.state.isReplying && (
           <div className="reply-section">
-            <textarea
+            <input
               value={this.state.replyContent}
               onChange={this.handleChangeReply}
+              type="text"
+              placeholder="Write a reply..."
+              classname="reply-in"
             />
             <button onClick={this.handleSaveReply}>Reply</button>
             <button onClick={this.handleCancelReply}>Cancel</button>
