@@ -3,7 +3,7 @@ export async function createComment(postId, token, comment) {
     const response = await fetch(
       `http://127.0.0.1:8000/api/rss/post_comment/`,
       {
-        method: "POST", // The correct method for creating a comment is "POST"
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Token ${token}`,
@@ -59,13 +59,12 @@ export async function editComment(commentId, token, comment) {
     const response = await fetch(
       `http://127.0.0.1:8000/api/rss/edit_comment/${commentId}/`,
       {
-        method: "UPDATE",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Token ${token}`,
         },
         body: JSON.stringify({
-          post_title: comment.title,
           content: comment.content,
         }),
       }

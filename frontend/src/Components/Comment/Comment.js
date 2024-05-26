@@ -1,6 +1,13 @@
 var React = require("react");
 require("./Comment.css");
 
+var {
+  createComment,
+  replyToComment,
+  editComment,
+  deleteComment,
+} = require("../../utils/commentActions");
+
 var Comment = React.createClass({
   getInitialState: function () {
     return {
@@ -16,7 +23,10 @@ var Comment = React.createClass({
   },
 
   handleCancelEdit: function () {
-    this.setState({ isEditing: false });
+    this.setState({
+      isEditing: false,
+      editedContent: this.props.comment.content,
+    });
   },
 
   handleChangeEdit: function (e) {
@@ -24,8 +34,23 @@ var Comment = React.createClass({
   },
 
   handleSave: function () {
-    this.setState({ isEditing: false });
-    this.props.onEdit(this.props.comment.comment_id, this.state.editedContent);
+    const token = localStorage.getItem("token");
+    const editedComment = {
+      ...this.props.comment,
+      content: this.state.editedContent,
+    };
+
+    editComment(this.props.comment.comment_id, token, editedComment)
+      .then((updatedComment) => {
+        this.props.onEdit(
+          this.props.comment.comment_id,
+          this.state.editedContent
+        );
+        this.setState({ isEditing: false });
+      })
+      .catch((error) => {
+        console.error("Error editing comment:", error);
+      });
   },
 
   handleReply: function () {
@@ -46,7 +71,14 @@ var Comment = React.createClass({
   },
 
   handleDelete: function () {
-    this.props.onDelete(this.props.comment.comment_id);
+    const token = localStorage.getItem("token");
+    deleteComment(this.props.comment.comment_id, token)
+      .then(() => {
+        this.props.onDelete(this.props.comment.comment_id);
+      })
+      .catch((error) => {
+        console.error("Error deleting comment:", error);
+      });
   },
 
   render: function () {
@@ -103,6 +135,19 @@ var Comment = React.createClass({
             />
             <button onClick={this.handleSaveReply}>Reply</button>
             <button onClick={this.handleCancelReply}>Cancel</button>
+          </div>
+        )}
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="replies">
+            {comment.replies.map(reply => (
+              <Comment
+                key={reply.comment_id}
+                comment={reply}
+                onDelete={this.props.onDelete}
+                onEdit={this.props.onEdit}
+                onReply={this.props.onReply}
+              />
+            ))}
           </div>
         )}
       </div>

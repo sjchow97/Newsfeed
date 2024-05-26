@@ -1,7 +1,9 @@
 var React = require("react");
-var Comment = require("../Comment/Comment");
+var CommentList = require("../Comment/CommentList");
 var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
+
+var { createComment } = require("../../utils/commentActions");
 
 var {
   handleLike,
@@ -14,15 +16,34 @@ var IndividualPost = React.createClass({
     return {
       post: {},
       comments: [],
+      showCommentInput: {},
       likes: 0,
       dislikes: 0,
       loading: true,
       userVote: 0,
+      newComment: "",
     };
   },
 
   componentDidMount: function () {
     this.fetchPost();
+  },
+
+  nestComments: function (comments) {
+    var commentMap = {};
+    comments.forEach(function (comment) {
+      comment.replies = [];
+      commentMap[comment.comment_id] = comment;
+    });
+    var nestedComments = [];
+    comments.forEach(function (comment) {
+      if (comment.parent) {
+        commentMap[comment.parent].replies.push(comment);
+      } else {
+        nestedComments.push(comment);
+      }
+    });
+    return nestedComments;
   },
 
   fetchPost: function () {
@@ -41,12 +62,13 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
+          console.log(this.nestComments(data.post_comments)); // Nest comments
           console.log(data);
           this.setState({
             post: data.feed_posts[0],
             likes: data.post_reactions.likes,
             dislikes: data.post_reactions.dislikes,
-            comments: data.post_comments,
+            comments: this.nestComments(data.post_comments),
             userVote: data.post_reactions.user_vote, // Set userVote from data
             loading: false,
           });
@@ -105,6 +127,48 @@ var IndividualPost = React.createClass({
       });
   },
 
+  handleDeleteComment: function (commentId) {
+    this.setState((prevState) => ({
+      comments: prevState.comments.filter(
+        (comment) => comment.comment_id !== commentId
+      ),
+    }));
+    window.location.reload();
+  },
+
+  handleEditComment: function (commentId, editedContent) {
+    this.setState((prevState) => ({
+      comments: prevState.comments.map((comment) =>
+        comment.comment_id === commentId
+          ? {
+              ...comment,
+              content: editedContent,
+              edited_date: new Date().toISOString(),
+            }
+          : comment
+      ),
+    }));
+  },
+
+  handleReplyToComment: function (commentId, replyContent) {
+    // Add reply logic here, typically involves making an API call
+    // For simplicity, let's just add a new comment as a reply
+    const newComment = {
+      comment_id: Math.random().toString(36).substr(2, 9),
+      user: localStorage.getItem("user")
+        ? JSON.parse(localStorage.getItem("user")).id
+        : null,
+      user_name: localStorage.getItem("user")
+        ? JSON.parse(localStorage.getItem("user")).name
+        : "Anonymous",
+      content: replyContent,
+      creation_date: new Date().toISOString(),
+    };
+    this.setState((prevState) => ({
+      comments: [...prevState.comments, newComment],
+    }));
+  },
+
   toggleCommentInput: function (id) {
     this.setState((prevState) => ({
       showCommentInput: {
@@ -112,6 +176,27 @@ var IndividualPost = React.createClass({
         [id]: !prevState.showCommentInput[id],
       },
     }));
+  },
+
+  handleCommentChange: function (e) {
+    this.setState({ newComment: e.target.value });
+  },
+
+  handleCommentSubmit: function (postId) {
+    const token = localStorage.getItem("token");
+    const comment = {
+      content: this.state.newComment,
+      post_reference: { reference_id: postId },
+    };
+
+    createComment(postId, token, comment)
+      .then((data) => {
+        this.setState({ newComment: "" });
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error creating comment:", error);
+      });
   },
 
   render: function () {
@@ -155,13 +240,31 @@ var IndividualPost = React.createClass({
                 }}
                 toggleCommentInput={this.toggleCommentInput}
               />
+              {this.state.showCommentInput && (
+                <div>
+                  <input
+                    className="comment-in"
+                    type="text"
+                    placeholder="Write a comment..."
+                    value={this.state.newComment}
+                    onChange={this.handleCommentChange}
+                  />
+                  <button
+                    className="submit"
+                    onClick={() => this.handleCommentSubmit(this.props.uuid)}
+                  >
+                    Post
+                  </button>
+                </div>
+              )}
             </div>
             <div className="comments">
-              <ul>
-                {this.state.comments.map(function (comment) {
-                  return <Comment key={comment.comment_id} comment={comment} />;
-                })}
-              </ul>
+              <CommentList
+                comments={this.state.comments}
+                onDelete={this.handleDeleteComment}
+                onEdit={this.handleEditComment}
+                onReply={this.handleReplyToComment}
+              />
             </div>
           </div>
         )}
