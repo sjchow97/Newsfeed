@@ -105,6 +105,47 @@ var IndividualPost = React.createClass({
       });
   },
 
+  handleDeleteComment: function (commentId) {
+    this.setState((prevState) => ({
+      comments: prevState.comments.filter(
+        (comment) => comment.comment_id !== commentId
+      ),
+    }));
+  },
+
+  handleEditComment: function (commentId, editedContent) {
+    this.setState((prevState) => ({
+      comments: prevState.comments.map((comment) =>
+        comment.comment_id === commentId
+          ? {
+              ...comment,
+              content: editedContent,
+              edited_date: new Date().toISOString(),
+            }
+          : comment
+      ),
+    }));
+  },
+
+  handleReplyToComment: function (commentId, replyContent) {
+    // Add reply logic here, typically involves making an API call
+    // For simplicity, let's just add a new comment as a reply
+    const newComment = {
+      comment_id: Math.random().toString(36).substr(2, 9),
+      user: localStorage.getItem("user")
+        ? JSON.parse(localStorage.getItem("user")).id
+        : null,
+      user_name: localStorage.getItem("user")
+        ? JSON.parse(localStorage.getItem("user")).name
+        : "Anonymous",
+      content: replyContent,
+      creation_date: new Date().toISOString(),
+    };
+    this.setState((prevState) => ({
+      comments: [...prevState.comments, newComment],
+    }));
+  },
+
   toggleCommentInput: function (id) {
     this.setState((prevState) => ({
       showCommentInput: {
@@ -158,9 +199,15 @@ var IndividualPost = React.createClass({
             </div>
             <div className="comments">
               <ul>
-                {this.state.comments.map(function (comment) {
-                  return <Comment key={comment.comment_id} comment={comment} />;
-                })}
+                {this.state.comments.map((comment) => (
+                  <Comment
+                    key={comment.comment_id}
+                    comment={comment}
+                    onDelete={this.handleDeleteComment}
+                    onEdit={this.handleEditComment}
+                    onReply={this.handleReplyToComment}
+                  />
+                ))}
               </ul>
             </div>
           </div>

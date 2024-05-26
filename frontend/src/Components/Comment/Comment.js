@@ -54,7 +54,13 @@ var Comment = React.createClass({
 
   handleDelete: function () {
     const token = localStorage.getItem("token");
-    deleteComment(this.props.comment.comment_id, token);
+    deleteComment(this.props.comment.comment_id, token)
+      .then(() => {
+        this.props.onDelete(this.props.comment.comment_id);
+      })
+      .catch((error) => {
+        console.error("Error deleting comment:", error);
+      });
   },
 
   render: function () {
