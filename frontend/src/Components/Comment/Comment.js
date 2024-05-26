@@ -1,6 +1,13 @@
 var React = require("react");
 require("./Comment.css");
 
+var {
+  createComment,
+  replyToComment,
+  editComment,
+  deleteComment,
+} = require("../../utils/commentActions");
+
 var Comment = React.createClass({
   getInitialState: function () {
     return {
@@ -46,7 +53,8 @@ var Comment = React.createClass({
   },
 
   handleDelete: function () {
-    this.props.onDelete(this.props.comment.comment_id);
+    const token = localStorage.getItem("token");
+    deleteComment(this.props.comment.comment_id, token);
   },
 
   render: function () {
