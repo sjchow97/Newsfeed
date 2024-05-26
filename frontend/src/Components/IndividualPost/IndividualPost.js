@@ -210,12 +210,12 @@ var IndividualPost = React.createClass({
           <div className="post-container">
             <div className="post-info">
               <h1>{this.state.post.title}</h1>
-              <h3>
+              <p>
                 {new Date(
                   this.state.post.published_parsed
                 ).toLocaleDateString()}
-              </h3>
-              <h3>{this.state.post.summary}</h3>
+              </p>
+              <p>{this.state.post.summary}</p>
               <div className="image-container">
                 <img
                   src={this.state.post.image}

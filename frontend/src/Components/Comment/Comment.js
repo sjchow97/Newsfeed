@@ -112,6 +112,9 @@ var Comment = React.createClass({
               {comment.content}
               {editedDate && <span className="edited"> (Edited)</span>}
             </p>
+            <a href="#" onClick={this.handleReply} className="reply-link">
+              Reply
+            </a>
             {showEditLink && (
               <div>
                 <a href="#" onClick={this.handleEdit} className="edit-link">
@@ -122,9 +125,7 @@ var Comment = React.createClass({
                 </a>
               </div>
             )}
-            <a href="#" onClick={this.handleReply} className="reply-link">
-              Reply
-            </a>
+           
           </div>
         )}
         {this.state.isReplying && (
