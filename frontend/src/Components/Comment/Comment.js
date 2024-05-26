@@ -23,7 +23,10 @@ var Comment = React.createClass({
   },
 
   handleCancelEdit: function () {
-    this.setState({ isEditing: false });
+    this.setState({
+      isEditing: false,
+      editedContent: this.props.comment.content,
+    });
   },
 
   handleChangeEdit: function (e) {
@@ -31,8 +34,23 @@ var Comment = React.createClass({
   },
 
   handleSave: function () {
-    this.setState({ isEditing: false });
-    this.props.onEdit(this.props.comment.comment_id, this.state.editedContent);
+    const token = localStorage.getItem("token");
+    const editedComment = {
+      ...this.props.comment,
+      content: this.state.editedContent,
+    };
+
+    editComment(this.props.comment.comment_id, token, editedComment)
+      .then((updatedComment) => {
+        this.props.onEdit(
+          this.props.comment.comment_id,
+          this.state.editedContent
+        );
+        this.setState({ isEditing: false });
+      })
+      .catch((error) => {
+        console.error("Error editing comment:", error);
+      });
   },
 
   handleReply: function () {

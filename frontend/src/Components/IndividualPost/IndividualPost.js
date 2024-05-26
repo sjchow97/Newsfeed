@@ -111,6 +111,7 @@ var IndividualPost = React.createClass({
         (comment) => comment.comment_id !== commentId
       ),
     }));
+    window.location.reload();
   },
 
   handleEditComment: function (commentId, editedContent) {
