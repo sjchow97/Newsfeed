@@ -20,17 +20,28 @@
     color: #888;
 }
 
-.edit-link,
-.delete-link,
+.edit-link {
+    color: rgb(28, 77, 134);
+    margin-left: 15px;
+}
+
+.delete-link {
+    color: rgb(28, 77, 134);
+    margin-left: 15px;
+}
+
 .reply-link {
-    color: blue;
-    text-decoration: underline;
-    cursor: pointer;
-    margin-left: 10px;
+    color: rgb(28, 77, 134);
+    margin-left: 15px;
 }
 
 .reply-section {
     margin-top: 10px;
+}
+
+.replies {
+    margin-left: -30px;
+    margin-right: -30px;
 }
 
 .reply-section button {

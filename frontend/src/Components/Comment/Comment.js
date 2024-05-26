@@ -1,4 +1,7 @@
 var React = require("react");
+var AiOutlineComment = require('react-icons/ai').AiOutlineComment;
+var AiOutlineEdit = require('react-icons/ai').AiOutlineEdit;
+var AiOutlineDelete = require('react-icons/ai').AiOutlineDelete;
 require("./Comment.css");
 
 var {
@@ -114,18 +117,18 @@ var Comment = React.createClass({
             </p>
             <div id="comment-actions">
               {!comment.parent && (
-                <a href="#" onClick={this.handleReply} className="reply-link">
-                  Reply
+                <a href="#" onClick={this.handleReply} className="reply-link" title="Reply">
+                  <AiOutlineComment />
                 </a>
               )}
               {showEditLink && (
                 <div>
-                  <a href="#" onClick={this.handleEdit} className="edit-link">
-                    Edit
+                  <a href="#" onClick={this.handleEdit} className="edit-link" title="Edit">
+                    <AiOutlineEdit />
                   </a>
                   {!comment.replies.length && (
-                    <a href="#" onClick={this.handleDelete} className="delete-link">
-                      Delete
+                    <a href="#" onClick={this.handleDelete} className="delete-link" title="Delete">
+                      <AiOutlineDelete />
                     </a>
                   )}
                 </div>

@@ -222,7 +222,7 @@ var IndividualPost = React.createClass({
                   className="post-image"
                 />
               </div>
-              <a href={this.state.post.link}>
+              <a href={this.state.post.link} className="no-underline">
                 <p>Link to article</p>
               </a>
               <PostButtons

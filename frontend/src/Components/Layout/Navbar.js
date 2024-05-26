@@ -19,7 +19,7 @@ var Navbar = React.createClass({
       React.createElement(
         "div",
         { className: "profile-notifications" },
-        <button className="notifications-button">Notifications</button>,
+        <p><b>{JSON.parse(localStorage.user).name}</b></p>,
         <div className="profile">
           <img src={profile.default} alt="profile" />
         </div>
