@@ -2,8 +2,6 @@ var React = require("react");
 require("./Comment.css");
 
 var {
-  createComment,
-  replyToComment,
   editComment,
   deleteComment,
 } = require("../../utils/commentActions");
@@ -53,7 +51,8 @@ var Comment = React.createClass({
       });
   },
 
-  handleReply: function () {
+  handleReply: function (event) {
+    event.preventDefault();
     this.setState({ isReplying: true });
   },
 

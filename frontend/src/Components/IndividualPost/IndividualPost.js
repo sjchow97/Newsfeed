@@ -3,7 +3,10 @@ var CommentList = require("../Comment/CommentList");
 var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
 
-var { createComment } = require("../../utils/commentActions");
+var { 
+  createComment,
+  replyToComment
+} = require("../../utils/commentActions");
 
 var {
   handleLike,
@@ -151,22 +154,18 @@ var IndividualPost = React.createClass({
   },
 
   handleReplyToComment: function (commentId, replyContent) {
-    // Add reply logic here, typically involves making an API call
-    // For simplicity, let's just add a new comment as a reply
-    const newComment = {
-      comment_id: Math.random().toString(36).substr(2, 9),
-      user: localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user")).id
-        : null,
-      user_name: localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user")).name
-        : "Anonymous",
+    const token = localStorage.getItem("token");
+    const comment = {
       content: replyContent,
-      creation_date: new Date().toISOString(),
     };
-    this.setState((prevState) => ({
-      comments: [...prevState.comments, newComment],
-    }));
+
+    replyToComment(commentId, token, comment)
+      .then((data) => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error creating comment:", error);
+      });
   },
 
   toggleCommentInput: function (id) {
