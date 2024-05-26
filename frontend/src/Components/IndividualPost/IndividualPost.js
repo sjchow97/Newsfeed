@@ -1,5 +1,5 @@
 var React = require("react");
-var Comment = require("../Comment/Comment");
+var CommentList = require("../Comment/CommentList");
 var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
 
@@ -25,6 +25,23 @@ var IndividualPost = React.createClass({
     this.fetchPost();
   },
 
+  nestComments: function (comments) {
+    var commentMap = {};
+    comments.forEach(function (comment) {
+      comment.replies = [];
+      commentMap[comment.comment_id] = comment;
+    });
+    var nestedComments = [];
+    comments.forEach(function (comment) {
+      if (comment.parent) {
+        commentMap[comment.parent].replies.push(comment);
+      } else {
+        nestedComments.push(comment);
+      }
+    });
+    return nestedComments;
+  },
+
   fetchPost: function () {
     this.setState({ loading: true });
     var token = localStorage.getItem("token");
@@ -41,12 +58,13 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
+          console.log(this.nestComments(data.post_comments)); // Nest comments
           console.log(data);
           this.setState({
             post: data.feed_posts[0],
             likes: data.post_reactions.likes,
             dislikes: data.post_reactions.dislikes,
-            comments: data.post_comments,
+            comments: this.nestComments(data.post_comments),
             userVote: data.post_reactions.user_vote, // Set userVote from data
             loading: false,
           });
@@ -199,17 +217,12 @@ var IndividualPost = React.createClass({
               />
             </div>
             <div className="comments">
-              <ul>
-                {this.state.comments.map((comment) => (
-                  <Comment
-                    key={comment.comment_id}
-                    comment={comment}
-                    onDelete={this.handleDeleteComment}
-                    onEdit={this.handleEditComment}
-                    onReply={this.handleReplyToComment}
-                  />
-                ))}
-              </ul>
+              <CommentList
+                comments={this.state.comments}
+                onDelete={this.handleDeleteComment}
+                onEdit={this.handleEditComment}
+                onReply={this.handleReplyToComment}
+              />
             </div>
           </div>
         )}

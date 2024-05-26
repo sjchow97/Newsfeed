@@ -137,6 +137,19 @@ var Comment = React.createClass({
             <button onClick={this.handleCancelReply}>Cancel</button>
           </div>
         )}
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="replies">
+            {comment.replies.map(reply => (
+              <Comment
+                key={reply.comment_id}
+                comment={reply}
+                onDelete={this.props.onDelete}
+                onEdit={this.props.onEdit}
+                onReply={this.props.onReply}
+              />
+            ))}
+          </div>
+        )}
       </div>
     );
   },
