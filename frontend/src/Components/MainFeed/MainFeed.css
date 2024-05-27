@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .posts {
@@ -19,7 +20,6 @@
   border-radius: 40px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 800px;
-  width: calc(100% - 40px); /* Ensure the post takes up the full width minus margin */
 }
 
 .post h1 {
@@ -70,8 +70,10 @@
 
 @media (max-width: 768px) {
   .post {
-      margin: 20px 10px;
+      margin: 20px;
+      margin-right: 210px;
       padding: 10px;
+      max-width: 900px;
   }
 
   .comment-in {
