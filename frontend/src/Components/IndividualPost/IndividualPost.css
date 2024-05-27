@@ -1,11 +1,12 @@
 .post-info {
+    flex-direction: column;
+    align-items: center;
     flex-grow: 1;
     padding: 20px;
     background-color: #ffffff;
-    margin: 40px;
+    margin: 20px;
     border-radius: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 1000px;
   }
   
   .post-info h1 {
@@ -75,4 +76,14 @@
     height: 100%;
     position: absolute; 
     object-fit: cover;
+}
+
+@media (max-width: 1273px){
+  .post-info{
+    margin-left: -80px;
+  }
+
+  .comments{
+    margin-left: -120px;
+  }
 }
