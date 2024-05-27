@@ -12,7 +12,7 @@
     background: white;
     padding: 40px;
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 340px;
     text-align: center;
 }
@@ -24,7 +24,11 @@ h2 {
     font-size: 24px;
 }
 
-input[type="text"],
+input {
+    all: none
+}
+
+input[type="username"],
 input[type="password"] {
     width: calc(100% - 18px);
     padding: 9px;
@@ -32,7 +36,7 @@ input[type="password"] {
     display: inline-block;
     border: 1px solid #ccc;
     box-sizing: border-box;
-    border-radius: 4px;
+    border-radius: 40px;
     font-size: 16px;
 }
 
@@ -52,8 +56,7 @@ input[type="password"] {
     background-color: #007BFF;
 }
 
-/* Input focus styles */
-input[type="text"]:focus,
+input[type="username"]:focus,
 input[type="password"]:focus {
     border-color: #007BFF;
     outline: none;
