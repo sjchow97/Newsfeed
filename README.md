@@ -84,7 +84,8 @@ python manage.py runserver
 
 To start the frontend UI, ensure you are in the `/frontend` directory, then run the following command:
 
-```npm start
+```
+npm start
 
 ```
 
