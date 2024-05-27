@@ -16,7 +16,8 @@
   flex-grow: 1;
   padding: 20px;
   background-color: #ffffff;
-  margin: 40px auto;
+  margin: 40px;
+  margin-left: 0;
   border-radius: 40px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   max-width: 800px;
@@ -71,9 +72,10 @@
 @media (max-width: 768px) {
   .post {
       margin: 20px;
-      margin-right: 210px;
+      margin-right: 200px;
+      margin-left: 0;
       padding: 10px;
-      max-width: 900px;
+      max-width: 1000px;
   }
 
   .comment-in {

@@ -56,8 +56,10 @@
       top: 40;
       left: -300px;
       height: 100%;
-      margin: 0;
       border-radius: 40px;
+      height: 370px;
+      width: 280px;
+      margin-right: 0;
   }
 
   .sidebar.open {
