@@ -3,10 +3,7 @@ var CommentList = require("../Comment/CommentList");
 var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
 
-var { 
-  createComment,
-  replyToComment
-} = require("../../utils/commentActions");
+var { createComment, replyToComment } = require("../../utils/commentActions");
 
 var {
   handleLike,
@@ -47,7 +44,9 @@ var IndividualPost = React.createClass({
       }
     });
     // Sort parent comments by date in descending order
-    nestedComments.sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date));
+    nestedComments.sort(
+      (a, b) => new Date(b.creation_date) - new Date(a.creation_date)
+    );
     return nestedComments;
   },
 

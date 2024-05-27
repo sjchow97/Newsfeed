@@ -60,6 +60,19 @@
     background-color: #f0f0f0;
 }
 
+.edit-in, .reply-in {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 40px;
+  border: none;
+  width: 80%;
+}
+
+.edit-buttons {
+    margin-top: 10px;
+}
+
 #user-name {
     font-weight: bold;
 }
