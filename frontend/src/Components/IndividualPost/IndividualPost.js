@@ -3,10 +3,7 @@ var CommentList = require("../Comment/CommentList");
 var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
 
-var { 
-  createComment,
-  replyToComment
-} = require("../../utils/commentActions");
+var { createComment, replyToComment } = require("../../utils/commentActions");
 
 var {
   handleLike,
@@ -46,6 +43,10 @@ var IndividualPost = React.createClass({
         nestedComments.push(comment);
       }
     });
+    // Sort parent comments by date in descending order
+    nestedComments.sort(
+      (a, b) => new Date(b.creation_date) - new Date(a.creation_date)
+    );
     return nestedComments;
   },
 
@@ -65,10 +66,13 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
+          const postReactions = data.post_reactions || {};
+          const likes = postReactions.likes || 0;
+          const dislikes = postReactions.dislikes || 0;
           this.setState({
             post: data.feed_posts[0],
-            likes: data.post_reactions.likes,
-            dislikes: data.post_reactions.dislikes,
+            likes: likes,
+            dislikes: dislikes,
             comments: this.nestComments(data.post_comments),
             userVote: data.post_reactions.user_vote,
             loading: false,

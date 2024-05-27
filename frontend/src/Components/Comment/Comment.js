@@ -1,13 +1,10 @@
 var React = require("react");
-var AiOutlineComment = require('react-icons/ai').AiOutlineComment;
-var AiOutlineEdit = require('react-icons/ai').AiOutlineEdit;
-var AiOutlineDelete = require('react-icons/ai').AiOutlineDelete;
+var AiOutlineComment = require("react-icons/ai").AiOutlineComment;
+var AiOutlineEdit = require("react-icons/ai").AiOutlineEdit;
+var AiOutlineDelete = require("react-icons/ai").AiOutlineDelete;
 require("./Comment.css");
 
-var {
-  editComment,
-  deleteComment,
-} = require("../../utils/commentActions");
+var { editComment, deleteComment } = require("../../utils/commentActions");
 
 var Comment = React.createClass({
   getInitialState: function () {
@@ -19,7 +16,8 @@ var Comment = React.createClass({
     };
   },
 
-  handleEdit: function () {
+  handleEdit: function (event) {
+    event.preventDefault();
     this.setState({ isEditing: true });
   },
 
@@ -72,7 +70,8 @@ var Comment = React.createClass({
     this.setState({ isReplying: false, replyContent: "" });
   },
 
-  handleDelete: function () {
+  handleDelete: function (event) {
+    event.preventDefault();
     const token = localStorage.getItem("token");
     deleteComment(this.props.comment.comment_id, token)
       .then(() => {
@@ -99,15 +98,18 @@ var Comment = React.createClass({
       <div className="comment">
         <p id="user-name">{comment.user_name}</p>
         <p id="publication-date">{creationDate}</p>
-        <br/>
+        <br />
         {this.state.isEditing ? (
-          <div>
-            <textarea
+          <div className="edit-div">
+            <input
               value={this.state.editedContent}
               onChange={this.handleChangeEdit}
+              className="edit-in"
             />
-            <button onClick={this.handleSave}>Save</button>
-            <button onClick={this.handleCancelEdit}>Cancel</button>
+            <div className="edit-buttons">
+              <button onClick={this.handleSave}>Save</button>
+              <button onClick={this.handleCancelEdit}>Cancel</button>
+            </div>
           </div>
         ) : (
           <div>
@@ -117,17 +119,32 @@ var Comment = React.createClass({
             </p>
             <div id="comment-actions">
               {!comment.parent && (
-                <a href="#" onClick={this.handleReply} className="reply-link" title="Reply">
+                <a
+                  href="#"
+                  onClick={this.handleReply}
+                  className="reply-link"
+                  title="Reply"
+                >
                   <AiOutlineComment />
                 </a>
               )}
               {showEditLink && (
                 <div>
-                  <a href="#" onClick={this.handleEdit} className="edit-link" title="Edit">
+                  <a
+                    href="#"
+                    onClick={this.handleEdit}
+                    className="edit-link"
+                    title="Edit"
+                  >
                     <AiOutlineEdit />
                   </a>
                   {!comment.replies.length && (
-                    <a href="#" onClick={this.handleDelete} className="delete-link" title="Delete">
+                    <a
+                      href="#"
+                      onClick={this.handleDelete}
+                      className="delete-link"
+                      title="Delete"
+                    >
                       <AiOutlineDelete />
                     </a>
                   )}
@@ -143,7 +160,7 @@ var Comment = React.createClass({
               onChange={this.handleChangeReply}
               type="text"
               placeholder="Write a reply..."
-              classname="reply-in"
+              className="reply-in"
             />
             <button onClick={this.handleSaveReply}>Reply</button>
             <button onClick={this.handleCancelReply}>Cancel</button>
@@ -151,7 +168,7 @@ var Comment = React.createClass({
         )}
         {comment.replies && comment.replies.length > 0 && (
           <div className="replies">
-            {comment.replies.map(reply => (
+            {comment.replies.map((reply) => (
               <Comment
                 key={reply.comment_id}
                 comment={reply}
