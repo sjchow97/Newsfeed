@@ -62,7 +62,7 @@ var Login = React.createClass({
           <div>
             <label>Username:</label>
             <input
-              type="text"
+              type="username"
               value={this.state.username}
               onChange={this.handleUsernameChange}
               required
