@@ -3,6 +3,9 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.utils import timezone
 from operator import attrgetter
 
+# Get all comments for a post
+# params: reference_id is the id of the post
+# returns: list of PostComment objects
 def get_comments(reference_id):
     # Sort comments by descending creation date
     comments = list(PostComment.objects.filter(reference=reference_id).order_by('-creation_date'))
@@ -10,6 +13,9 @@ def get_comments(reference_id):
     comments.sort(key=attrgetter('parent_id', 'creation_date'))
     return comments
 
+# Add a comment to a post
+# params: reference_id is the id of the post, user is the User object, post_title is the title of the post, content is the comment content
+# returns: PostComment object
 def add_comment(reference_id, user, post_title, content):
     reference, created = PostReference.objects.get_or_create(id=reference_id)
     comment = PostComment()
@@ -29,6 +35,9 @@ def add_comment(reference_id, user, post_title, content):
     comment.save()
     return comment
 
+# Edit a comment
+# params: comment_id is the id of the comment, user is the User object, post_title is the title of the post, content is the comment content
+# returns: PostComment object
 def edit_comment(comment_id, user, post_title, content):
     comment = PostComment.objects.get(comment_id=comment_id)
     comment.edited_date = timezone.now()
@@ -47,6 +56,8 @@ def edit_comment(comment_id, user, post_title, content):
     comment.save()
     return comment
 
+# Delete a comment
+# params: comment_id is the id of the comment, user is the User object
 def delete_comment(comment_id, user):
     comment = PostComment.objects.get(comment_id=comment_id)
     if (comment.user != user):

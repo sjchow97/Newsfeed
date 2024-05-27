@@ -1,9 +1,4 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.template import loader
-from django.core.exceptions import ValidationError
 from django.utils import timezone
-from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
@@ -14,7 +9,7 @@ from .feed_reader import get_feeds, feed_to_json
 from .comment_model_manager import get_comments
 from .reaction_model_manager import get_reactions, add_reaction, remove_reaction, get_reaction_counts, user_reaction
 from .models import PostReference, PostComment, PostReaction
-from .serializers import PostReferenceSerializer, PostCommentSerializer, PostReactionSerializer
+from .serializers import PostCommentSerializer
 from bs4 import BeautifulSoup
 
 import uuid
@@ -82,7 +77,7 @@ def read_feeds(request):
     }
     return Response(context)
 
-#Gets a single post based on the reference ID
+# Gets a single post based on the reference ID
 # GET /rss/get_single_post/<reference>/
 # params: request object, reference
 # returns: response object with body containing JSON object containing the single post, comments and reactions related to the post
