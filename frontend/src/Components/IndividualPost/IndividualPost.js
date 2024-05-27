@@ -65,14 +65,12 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
-          console.log(this.nestComments(data.post_comments)); // Nest comments
-          console.log(data);
           this.setState({
             post: data.feed_posts[0],
             likes: data.post_reactions.likes,
             dislikes: data.post_reactions.dislikes,
             comments: this.nestComments(data.post_comments),
-            userVote: data.post_reactions.user_vote, // Set userVote from data
+            userVote: data.post_reactions.user_vote,
             loading: false,
           });
         }.bind(this)
