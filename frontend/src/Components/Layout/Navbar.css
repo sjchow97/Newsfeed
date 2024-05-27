@@ -3,12 +3,13 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
+  height: auto;
   background-color: #59ACE8;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .logo {
-  width: 350px;
+  width: 300px;
   height: auto;
   margin-right: 20px;
 }
@@ -22,7 +23,7 @@
   background-color: #C5F0FE;
   border: none;
   color: black;
-  padding: 15px 30px;
+  padding: 10px 20px;
   border-radius: 40px;
   cursor: pointer;
   font-size: 18px;
@@ -56,12 +57,12 @@
 }
 
 .profile-name{
-  font-size: 25px;
+  font-size: 20px;
 }
 
 .profile img {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
 }
 
@@ -101,4 +102,15 @@
   .navbar-hamburger {
       display: flex;
   }
+
+  .profile img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  
+.profile-name{
+  font-size: 25px;
+}
 }

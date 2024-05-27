@@ -18,7 +18,7 @@
 
 .image-container {
     margin: auto;
-    width: 65%;
+    width: 100%;
     padding-bottom: 40%;
     position: relative;
 }
@@ -28,6 +28,7 @@
     height: 100%;
     position: absolute;
     object-fit: cover;
+    border-radius: 20px;
 }
 
 .actions-menu {
