@@ -46,6 +46,8 @@ var IndividualPost = React.createClass({
         nestedComments.push(comment);
       }
     });
+    // Sort parent comments by date in descending order
+    nestedComments.sort((a, b) => new Date(b.creation_date) - new Date(a.creation_date));
     return nestedComments;
   },
 
