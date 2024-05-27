@@ -69,7 +69,7 @@
   height: 100vh;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1273px) {
   .post {
       margin: 20px;
       margin-right: 200px;
