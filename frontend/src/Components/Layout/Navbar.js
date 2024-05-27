@@ -4,6 +4,14 @@ var logo = require("../../Images/logo.png");
 var profile = require("../../Images/profile.png");
 
 var Navbar = React.createClass({
+  getInitialState: function () {
+    return { isOpen: false };
+  },
+
+  toggleMenu: function () {
+    this.setState({ isOpen: !this.state.isOpen });
+  },
+
   render: function () {
     return React.createElement(
       "div",
@@ -11,7 +19,7 @@ var Navbar = React.createClass({
       <img src={logo.default} alt="logo" className="logo" />,
       React.createElement(
         "div",
-        { className: "nav-buttons" },
+        { className: `nav-buttons ${this.state.isOpen ? 'open' : ''}` },
         React.createElement("button", null, "Explore Topics"),
         React.createElement("button", null, "Start a Conversation"),
         React.createElement("button", null, "Home")
@@ -23,6 +31,13 @@ var Navbar = React.createClass({
         <div className="profile">
           <img src={profile.default} alt="profile" />
         </div>
+      ),
+      React.createElement(
+        "div",
+        { className: "navbar-hamburger", onClick: this.toggleMenu },
+        React.createElement("span", { className: "bar" }),
+        React.createElement("span", { className: "bar" }),
+        React.createElement("span", { className: "bar" })
       )
     );
   },
