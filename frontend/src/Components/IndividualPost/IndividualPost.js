@@ -66,10 +66,14 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
+          console.log(data);
+          const postReactions = data.post_reactions || {};
+          const likes = postReactions.likes || 0;
+          const dislikes = postReactions.dislikes || 0;
           this.setState({
             post: data.feed_posts[0],
-            likes: data.post_reactions.likes,
-            dislikes: data.post_reactions.dislikes,
+            likes: likes,
+            dislikes: dislikes,
             comments: this.nestComments(data.post_comments),
             userVote: data.post_reactions.user_vote,
             loading: false,
@@ -198,6 +202,7 @@ var IndividualPost = React.createClass({
   },
 
   render: function () {
+    console.log(this.state.likes, this.state.dislikes);
     return (
       <div className="individual-post">
         {this.state.loading ? (
