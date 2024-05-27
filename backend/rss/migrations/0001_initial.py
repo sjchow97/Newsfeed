@@ -13,19 +13,27 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='CommentReaction',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('vote', models.IntegerField(choices=[(1, b'Like'), (-1, b'Dislike')])),
+            ],
+        ),
+        migrations.CreateModel(
             name='PostComment',
             fields=[
-                ('comment_id', models.IntegerField(serialize=False, primary_key=True)),
-                ('post_title', models.CharField(max_length=200)),
-                ('content', models.CharField(max_length=200)),
-                ('link', models.CharField(max_length=200)),
+                ('comment_id', models.AutoField(serialize=False, primary_key=True)),
+                ('post_title', models.CharField(max_length=80, null=True)),
+                ('content', models.CharField(max_length=800)),
                 ('creation_date', models.DateTimeField(verbose_name=b'date published')),
+                ('edited_date', models.DateTimeField(null=True, verbose_name=b'date edited')),
+                ('parent', models.ForeignKey(related_name='replies', blank=True, to='rss.PostComment', null=True)),
             ],
         ),
         migrations.CreateModel(
             name='PostReaction',
             fields=[
-                ('reaction_id', models.IntegerField(serialize=False, primary_key=True)),
+                ('reaction_id', models.AutoField(serialize=False, primary_key=True)),
                 ('vote', models.IntegerField(choices=[(1, b'Like'), (-1, b'Dislike')])),
             ],
         ),
@@ -33,13 +41,12 @@ class Migration(migrations.Migration):
             name='PostReference',
             fields=[
                 ('reference_id', models.CharField(max_length=200, serialize=False, primary_key=True)),
-                ('source_id', models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
             name='RssSource',
             fields=[
-                ('source_id', models.IntegerField(serialize=False, primary_key=True)),
+                ('source_id', models.AutoField(serialize=False, primary_key=True)),
                 ('source_name', models.CharField(max_length=200)),
                 ('url', models.CharField(max_length=200)),
                 ('location', models.CharField(max_length=100)),
@@ -62,6 +69,16 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='postcomment',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='commentreaction',
+            name='comment',
+            field=models.ForeignKey(to='rss.PostComment'),
+        ),
+        migrations.AddField(
+            model_name='commentreaction',
             name='user',
             field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),

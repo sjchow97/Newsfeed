@@ -217,13 +217,17 @@ var IndividualPost = React.createClass({
                 ).toLocaleDateString()}
               </p>
               <p>{this.state.post.summary}</p>
-              <div className="image-container">
-                <img
-                  src={this.state.post.image}
-                  alt={this.state.post.title}
-                  className="post-image"
-                />
-              </div>
+              {
+                this.state.post.image && (
+                  <div className="image-container">
+                    <img
+                      src={this.state.post.image}
+                      alt={this.state.post.title}
+                      className="post-image"
+                    />
+                  </div>
+                )
+              }
               <a href={this.state.post.link} className="no-underline">
                 <p>Link to article</p>
               </a>

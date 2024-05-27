@@ -153,9 +153,13 @@ var Post = React.createClass({
           <p>{new Date(published_parsed).toLocaleDateString()}</p>
           <p>{summary}</p>
         </div>
-        <div className="image-container">
-          <img src={imageUrl} alt={title} className="post-image" />
-        </div>
+        {
+          imageUrl && (
+            <div className="image-container">
+              <img src={imageUrl} alt={title} className="post-image" />
+            </div>
+          )
+        }
         <div className="actions-menu">
           <a href={link} target="_blank" className="no-underline">
             <p>Link to article</p>
