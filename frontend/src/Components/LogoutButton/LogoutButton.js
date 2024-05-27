@@ -1,5 +1,4 @@
 var React = require("react");
-var axios = require('axios');
 var browserHistory = require('react-router').browserHistory;
 require("./LogoutButton.css");
 

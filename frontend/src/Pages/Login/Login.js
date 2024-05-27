@@ -1,7 +1,5 @@
 var React = require("react");
 var browserHistory = require("react-router").browserHistory;
-var getCSRFToken = require("../../utils/csrfToken").getCSRFToken;
-var axios = require("axios");
 require("./Login.css");
 
 var Login = React.createClass({

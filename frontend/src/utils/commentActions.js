@@ -34,14 +34,15 @@ export async function replyToComment(commentId, token, comment) {
     const response = await fetch(
       `http://127.0.0.1:8000/api/rss/reply/${commentId}/`,
       {
-        method: "CREATE",
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Token ${token}`,
         },
-        body: {
+        body: JSON.stringify({
           post_title: comment.title,
           content: comment.content,
-        },
+        }),
       }
     );
     if (!response.ok) {

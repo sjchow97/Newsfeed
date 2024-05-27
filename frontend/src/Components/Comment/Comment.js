@@ -1,9 +1,10 @@
 var React = require("react");
+var AiOutlineComment = require('react-icons/ai').AiOutlineComment;
+var AiOutlineEdit = require('react-icons/ai').AiOutlineEdit;
+var AiOutlineDelete = require('react-icons/ai').AiOutlineDelete;
 require("./Comment.css");
 
 var {
-  createComment,
-  replyToComment,
   editComment,
   deleteComment,
 } = require("../../utils/commentActions");
@@ -53,7 +54,8 @@ var Comment = React.createClass({
       });
   },
 
-  handleReply: function () {
+  handleReply: function (event) {
+    event.preventDefault();
     this.setState({ isReplying: true });
   },
 
@@ -95,8 +97,9 @@ var Comment = React.createClass({
 
     return (
       <div className="comment">
-        <p>{comment.user_name}</p>
-        <p>{creationDate}</p>
+        <p id="user-name">{comment.user_name}</p>
+        <p id="publication-date">{creationDate}</p>
+        <br/>
         {this.state.isEditing ? (
           <div>
             <textarea
@@ -112,26 +115,35 @@ var Comment = React.createClass({
               {comment.content}
               {editedDate && <span className="edited"> (Edited)</span>}
             </p>
-            {showEditLink && (
-              <div>
-                <a href="#" onClick={this.handleEdit} className="edit-link">
-                  Edit
+            <div id="comment-actions">
+              {!comment.parent && (
+                <a href="#" onClick={this.handleReply} className="reply-link" title="Reply">
+                  <AiOutlineComment />
                 </a>
-                <a href="#" onClick={this.handleDelete} className="delete-link">
-                  Delete
-                </a>
-              </div>
-            )}
-            <a href="#" onClick={this.handleReply} className="reply-link">
-              Reply
-            </a>
+              )}
+              {showEditLink && (
+                <div>
+                  <a href="#" onClick={this.handleEdit} className="edit-link" title="Edit">
+                    <AiOutlineEdit />
+                  </a>
+                  {!comment.replies.length && (
+                    <a href="#" onClick={this.handleDelete} className="delete-link" title="Delete">
+                      <AiOutlineDelete />
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
         {this.state.isReplying && (
           <div className="reply-section">
-            <textarea
+            <input
               value={this.state.replyContent}
               onChange={this.handleChangeReply}
+              type="text"
+              placeholder="Write a reply..."
+              classname="reply-in"
             />
             <button onClick={this.handleSaveReply}>Reply</button>
             <button onClick={this.handleCancelReply}>Cancel</button>

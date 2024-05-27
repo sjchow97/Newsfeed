@@ -3,7 +3,10 @@ var CommentList = require("../Comment/CommentList");
 var PostButtons = require("../PostButtons/PostButtons");
 require("./IndividualPost.css");
 
-var { createComment } = require("../../utils/commentActions");
+var { 
+  createComment,
+  replyToComment
+} = require("../../utils/commentActions");
 
 var {
   handleLike,
@@ -62,14 +65,12 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
-          console.log(this.nestComments(data.post_comments)); // Nest comments
-          console.log(data);
           this.setState({
             post: data.feed_posts[0],
             likes: data.post_reactions.likes,
             dislikes: data.post_reactions.dislikes,
             comments: this.nestComments(data.post_comments),
-            userVote: data.post_reactions.user_vote, // Set userVote from data
+            userVote: data.post_reactions.user_vote,
             loading: false,
           });
         }.bind(this)
@@ -151,22 +152,18 @@ var IndividualPost = React.createClass({
   },
 
   handleReplyToComment: function (commentId, replyContent) {
-    // Add reply logic here, typically involves making an API call
-    // For simplicity, let's just add a new comment as a reply
-    const newComment = {
-      comment_id: Math.random().toString(36).substr(2, 9),
-      user: localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user")).id
-        : null,
-      user_name: localStorage.getItem("user")
-        ? JSON.parse(localStorage.getItem("user")).name
-        : "Anonymous",
+    const token = localStorage.getItem("token");
+    const comment = {
       content: replyContent,
-      creation_date: new Date().toISOString(),
     };
-    this.setState((prevState) => ({
-      comments: [...prevState.comments, newComment],
-    }));
+
+    replyToComment(commentId, token, comment)
+      .then((data) => {
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error creating comment:", error);
+      });
   },
 
   toggleCommentInput: function (id) {
@@ -210,12 +207,12 @@ var IndividualPost = React.createClass({
           <div className="post-container">
             <div className="post-info">
               <h1>{this.state.post.title}</h1>
-              <h3>
+              <p>
                 {new Date(
                   this.state.post.published_parsed
                 ).toLocaleDateString()}
-              </h3>
-              <h3>{this.state.post.summary}</h3>
+              </p>
+              <p>{this.state.post.summary}</p>
               <div className="image-container">
                 <img
                   src={this.state.post.image}
@@ -223,7 +220,7 @@ var IndividualPost = React.createClass({
                   className="post-image"
                 />
               </div>
-              <a href={this.state.post.link}>
+              <a href={this.state.post.link} className="no-underline">
                 <p>Link to article</p>
               </a>
               <PostButtons
