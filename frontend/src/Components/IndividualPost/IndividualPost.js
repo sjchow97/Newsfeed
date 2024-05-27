@@ -66,7 +66,6 @@ var IndividualPost = React.createClass({
       })
       .then(
         function (data) {
-          console.log(data);
           const postReactions = data.post_reactions || {};
           const likes = postReactions.likes || 0;
           const dislikes = postReactions.dislikes || 0;
@@ -202,7 +201,6 @@ var IndividualPost = React.createClass({
   },
 
   render: function () {
-    console.log(this.state.likes, this.state.dislikes);
     return (
       <div className="individual-post">
         {this.state.loading ? (

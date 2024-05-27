@@ -43,8 +43,6 @@ var PostButtons = React.createClass({
       toggleCommentInput,
     } = this.props;
 
-    console.log(like_count, dislikes_count);
-
     return (
       <div className="post-buttons">
         {userVote === 1 ? (
