@@ -12,6 +12,23 @@ var PostButtons = React.createClass({
     this.props.onButtonClick(action, id);
   },
 
+  handleShare: function () {
+    const { article } = this.props;
+    const shareData = {
+      title: article.title,
+      text: article.summary,
+      url: article.link,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData)
+        .then(() => console.log('Successfully shared'))
+        .catch((error) => console.error('Error sharing', error));
+    } else {
+      alert('Share not supported on this browser, please copy the link manually.');
+    }
+  },
+
   render: function () {
     var {
       userVote,
@@ -46,7 +63,7 @@ var PostButtons = React.createClass({
         <button onClick={() => toggleCommentInput(article.id)} title="Comment">
           <AiOutlineComment /> {comment_count}
         </button>
-        <button onClick={() => alert("Share functionality to be implemented")} title="Share">
+        <button onClick={this.handleShare} title="Share">
           <AiOutlineShareAlt />
         </button>
       </div>
