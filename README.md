@@ -86,7 +86,6 @@ To start the frontend UI, ensure you are in the `/frontend` directory, then run 
 
 ```
 npm start
-
 ```
 
 The frontend can be viewed at http://localhost:9000.
@@ -112,7 +111,6 @@ Please refer to inline documentation in `recursiveScraper.py` for specific imple
 The repository is laid out in the following structure:
 
 ```
-
 .
 ├── backend - directory containing Django code
 │ ├── accounts - Django app related to user accounts

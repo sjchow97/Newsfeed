@@ -217,17 +217,15 @@ var IndividualPost = React.createClass({
                 ).toLocaleDateString()}
               </p>
               <p>{this.state.post.summary}</p>
-              {
-                this.state.post.image && (
-                  <div className="image-container">
-                    <img
-                      src={this.state.post.image}
-                      alt={this.state.post.title}
-                      className="post-image"
-                    />
-                  </div>
-                )
-              }
+              {this.state.post.image && (
+                <div className="image-container">
+                  <img
+                    src={this.state.post.image}
+                    alt={this.state.post.title}
+                    className="post-image"
+                  />
+                </div>
+              )}
               <a href={this.state.post.link} className="no-underline">
                 <p>Link to article</p>
               </a>
@@ -246,7 +244,7 @@ var IndividualPost = React.createClass({
                 toggleCommentInput={this.toggleCommentInput}
               />
               {this.state.showCommentInput && (
-                <div>
+                <div className="popout-comment">
                   <input
                     className="comment-in"
                     type="text"

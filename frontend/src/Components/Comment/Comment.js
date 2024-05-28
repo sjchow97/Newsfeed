@@ -162,8 +162,10 @@ var Comment = React.createClass({
               placeholder="Write a reply..."
               className="reply-in"
             />
-            <button onClick={this.handleSaveReply}>Reply</button>
-            <button onClick={this.handleCancelReply}>Cancel</button>
+            <div className="reply-buttons">
+              <button onClick={this.handleSaveReply}>Reply</button>
+              <button onClick={this.handleCancelReply}>Cancel</button>
+            </div>
           </div>
         )}
         {comment.replies && comment.replies.length > 0 && (
