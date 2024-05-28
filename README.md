@@ -117,7 +117,6 @@ The repository is laid out in the following structure:
 │ ├── newsfeed - main Django app tying all pieces together
 │ ├── rss - Django app related to displaying RSS feeds and CRUD of comments
 │ ├── scraper - directory containing web scraper script and excel files for input
-│ ├── .gitignore
 │ ├── db.sqlite3 - SQLite database
 │ ├── manage.py - starting point for backend Django server
 │ └── rss_requirements.txt - text file containing relevant packages used by the backend
