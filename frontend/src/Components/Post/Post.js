@@ -153,13 +153,11 @@ var Post = React.createClass({
           <p>{new Date(published_parsed).toLocaleDateString()}</p>
           <p>{summary}</p>
         </div>
-        {
-          imageUrl && (
-            <div className="image-container">
-              <img src={imageUrl} alt={title} className="post-image" />
-            </div>
-          )
-        }
+        {imageUrl && (
+          <div className="image-container">
+            <img src={imageUrl} alt={title} className="post-image" />
+          </div>
+        )}
         <div className="actions-menu">
           <a href={link} target="_blank" className="no-underline">
             <p>Link to article</p>
@@ -175,7 +173,7 @@ var Post = React.createClass({
             toggleCommentInput={this.toggleCommentInput}
           />
           {showCommentInput[article.id] && (
-            <div>
+            <div className="popout-comment">
               <input
                 className="comment-in"
                 type="text"

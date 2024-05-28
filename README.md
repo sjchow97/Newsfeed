@@ -86,7 +86,6 @@ To start the frontend UI, ensure you are in the `/frontend` directory, then run 
 
 ```
 npm start
-
 ```
 
 The frontend can be viewed at http://localhost:9000.
@@ -112,14 +111,12 @@ Please refer to inline documentation in `recursiveScraper.py` for specific imple
 The repository is laid out in the following structure:
 
 ```
-
 .
 ├── backend - directory containing Django code
 │ ├── accounts - Django app related to user accounts
 │ ├── newsfeed - main Django app tying all pieces together
 │ ├── rss - Django app related to displaying RSS feeds and CRUD of comments
 │ ├── scraper - directory containing web scraper script and excel files for input
-│ ├── .gitignore
 │ ├── db.sqlite3 - SQLite database
 │ ├── manage.py - starting point for backend Django server
 │ └── rss_requirements.txt - text file containing relevant packages used by the backend

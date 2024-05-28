@@ -36,6 +36,8 @@
 
 .reply-section {
     margin-top: 10px;
+    display: grid;
+    grid-template-columns: 74% 26%;
 }
 
 .replies {
@@ -56,12 +58,16 @@
     margin: 0.5%;
 }
 
+.reply-buttons {
+    display: flex;
+    justify-content: center;
+}
+
 .reply-section input {
     background-color: #f0f0f0;
 }
 
 .edit-in, .reply-in {
-  margin-top: 20px;
   padding: 10px;
   background-color: #f0f0f0;
   border-radius: 40px;
@@ -69,8 +75,18 @@
   width: 80%;
 }
 
-.edit-buttons {
+.edit-in {
     margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.edit-div {
+    display: grid;
+    grid-template-columns: 72% 28%;
+}
+
+.edit-buttons {
+    margin-top: 5px;
 }
 
 #user-name {
