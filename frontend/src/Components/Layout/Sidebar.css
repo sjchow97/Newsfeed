@@ -1,72 +1,68 @@
 .sidebar-container {
-  position: relative;
-  left: 0;
-  z-index: 1000;
-  width: 300px;
+    position: relative;
+    left: 0;
+    z-index: 1000;
+    width: 20%;
 }
 
-
 .sidebar-toggle {
-  display: none;
-  position: fixed;
-  top: 6rem;
-  left: 1rem;
-  z-index: 1000;
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  border-radius: 40px;
+    display: none;
+    position: fixed;
+    top: 6rem;
+    left: 1rem;
+    z-index: 1000;
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 40px;
 }
 
 .sidebar {
-  width: 300px;
-  background-color: #D7F0FF;
-  margin-top: 40px;
-  margin-left: 20px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  border-radius: 40px;
-  transition: left 0.3s ease;
+    width: 300px;
+    background-color: #D7F0FF;
+    margin-top: 40px;
+    margin-left: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 40px;
+    transition: left 0.3s ease;
 }
 
 .sidebar a {
-  display: block;
-  padding: 10px;
-  color: black;
-  margin: 5px;
-  text-decoration: none;
-  font-size: 20px;
-  font-weight: bold;
-  border-radius: 40px;
-  transition: all 0.3s ease;
+    display: block;
+    padding: 10px;
+    color: black;
+    margin: 5px;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 40px;
+    transition: all 0.3s ease;
 }
 
 .sidebar a:hover {
-  background-color: #ffffff;
-  border-radius: 40px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 40px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 1273px) {
-
-  .sidebar {
-      position: fixed;
-      top: 40;
-      left: -300px;
-      height: 100%;
-      border-radius: 40px;
-      height: 370px;
-      width: 280px;
-      margin-right: 0;
-  }
-
-  .sidebar.open {
-      left: 0;
-  }
-
-  .sidebar-toggle {
-      display: block;
-  }
+    .sidebar {
+        position: fixed;
+        top: 40;
+        left: -300px;
+        height: 100%;
+        border-radius: 40px;
+        height: 370px;
+        width: 280px;
+        margin-right: 0;
+    }
+    .sidebar.open {
+        left: 0;
+    }
+    .sidebar-toggle {
+        display: block;
+    }
 }
