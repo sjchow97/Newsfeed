@@ -15,7 +15,7 @@ def get_feeds(location):
     for source in rss_sources:
         feed = feedparser.parse(source.url)
         if feed.bozo:
-            print("Error reading feed: " + str(feed.bozo_exception))
+            print("Error from " + source.url + ": " + str(feed.bozo_exception))
             continue
         else:
             feeds['entries'].extend(feed.entries)
